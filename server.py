@@ -10,33 +10,43 @@ s.bind((host, port))
 s.listen(5)
 c = None
 c2 = None
-if c is None:
-	# Halts
-	print '[Waiting for connection...]'
-	c, addr = s.accept()
-	print 'Got connection from', addr
+print('[Waiting for connection...]')
+while c is None:
+		c, addr = s.accept()
+print 'Got connection from', addr
 		
-if c2 is None:
+while c2 is None:
 	c2, addr2 = s.accept()
-	print 'Got connection from', addr2
-	
-while True:	
+print 'Got connection from', addr2
+
+#This causes all socket operations on s to timeout (Throw a socket.timemout exception)
+#if more than the set time passes.
+c.settimeout(0.01)
+c2.settimeout(0.01)
+
+while True:
+	q = None
 	if c is not None:
 		# Halts
 		#print '[Waiting for response...]'
 		
-			#print 'receiving data from %s'%ad
+		#print 'receiving data from %s'%ad
+		try:
 			q = c.recv(1024)
-			#q = raw_input("Enter something to this client: ")
 			c2.send(q)
+		except(socket.timeout):
+			#If the socket times out, there isn't any input from c1
+			pass
 			
-
 	if c2 is not None:
 		# Halts
 		#print '[Waiting for response...]'
-		
-			#print 'receiving data from %s'%ad
+	
+		#print 'receiving data from %s'%ad
+		try:
 			q = c2.recv(1024)
-			#q = raw_input("Enter something to this client: ")
 			c.send(q)
+		except(socket.timeout):
+			#If the socket times out, there isn't any input from c2
+			pass
 			
