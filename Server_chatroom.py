@@ -3,10 +3,11 @@ from Chatroom import chatroom
 class server_chatroom(chatroom):
 	userList = None
 	
-	def __init__(self):
+	def __init__(self, n):
 		self.userList = []
 		self.messageHistory = []
 		self.length = 0
+		self.name = n
 	
 	def add_user(self, u):
 		self.userList.append(u)
@@ -26,11 +27,12 @@ class server_chatroom(chatroom):
 # Basic test suite for chatroom
 # Tests on the base chatroom are repeated here
 def main():
-	c = server_chatroom()
+	c = server_chatroom("testName")
 	# Ensure that an empty chat room has the correct values
 	assert (c.length == 0)
 	assert (c.get_history() == [])
 	assert (c.userList == [])
+	assert (c.get_name() == "testName")
 	
 	c.add_message("test1")
 	c.add_message("test2")
