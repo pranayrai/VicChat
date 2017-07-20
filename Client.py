@@ -5,8 +5,13 @@ import threading
 #Continuously look for input as a second thread. Stash any results in global z
 def check_for_input():
 	global z
-	while True:
-		z = raw_input("Enter something: ")
+	try:
+		while True:
+			z = raw_input("")
+	except KeyboardInterrupt:
+		s.shutdown(socket.SHUT_RDWR)
+		s.close()
+
 	
 
 s = socket.socket()
@@ -27,10 +32,11 @@ threading.Thread(target = check_for_input).start()
 #Continuously look for user and server messages
 while True:
 	try:
-		print s.recv(1024)
+		print '\n'+'\t'+'\t'+s.recv(1024)
 	except (socket.timeout):
 		#No input received
 		pass
 	if z is not None:
 		s.send(z)
 		z = None
+	
