@@ -2,13 +2,14 @@ from Chatroom import chatroom
 
 class user():	
 	
-	chatroom = ["room1", "room2"]
+	chatroom = []
 	
 	def __init__(self, username):
 		self.username = username
 		self.userStatus = None
 		self.guestUser = True
 		self.userList = []
+		self.chatroom = []
 		
 	def get_username(self):
 		return self.username
@@ -37,9 +38,10 @@ class user():
 			
 if __name__ == "__main__":
 
-	print "Testing"
+	print "Testing"	
 	u = user("BOB")
 	print "Username:" + u.get_username()
+	
 	
 	print ""
 	print "Adding user to userList"
@@ -50,6 +52,7 @@ if __name__ == "__main__":
 	print ""	
 	print "User Status:" + u.get_user_status("BOB")
 	
+	u.chatroom.append("room1")
 	print ""
 	print "Chatrooms:"
 	print u.get_chat_rooms()
