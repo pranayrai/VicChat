@@ -1,6 +1,6 @@
 from Chatroom import chatroom
 
-class User
+class User:
 
 	username = ''
 	userStatus = None
@@ -22,16 +22,16 @@ class User
 		return self.chatrooms[:]
 		
 	def add_chatroom(self,room):
-        if room in self.chatrooms:
-            return False
-        self.chatrooms.append(room)
-        return True
+            if room in self.chatrooms:
+                return False
+            self.chatrooms.append(room)
+            return True
 		
 	def leave_chatroom(self,room):
-        if room not in self.chatrooms:
-            return False
-        self.chatrooms.leave(room)
-        return True
+            if room not in self.chatrooms:
+                return False
+            self.chatrooms.leave(room)
+            return True
 		
 	
 		
