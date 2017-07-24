@@ -8,6 +8,7 @@ class server_chatroom(chatroom):
 		self.length = 0
 		self.userList = []
 		self.name = n
+		self.maxLen = 100
 	
 	def add_user(self, u):
 		self.userList.append(u)
@@ -22,7 +23,15 @@ class server_chatroom(chatroom):
 			return True
 		except (ValueError):
 			return False
-
+	
+	def add_message(self, m):
+		# Remove the oldest message if the maximum length is reached
+		if self.length >= self.maxLen:
+			self.length -= 1
+			self.messageHistory.pop(0)
+		self.messageHistory.append(m)
+		self.length += 1
+		return self.userList
 
 # Basic test suite for chatroom
 # Tests on the base chatroom are repeated here

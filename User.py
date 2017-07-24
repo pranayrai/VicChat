@@ -1,73 +1,65 @@
+#Tests incomplete due to changes in class behaviour********
+
 from Chatroom import chatroom
 
 class user():	
 	
-	chatroom = []
+	chatrooms = []
 	
-	def __init__(self, username):
+	def __init__(self, username, conn):
 		self.username = username
-		self.userStatus = None
-		self.guestUser = True
-		self.userList = []
-		self.chatroom = []
+		self.connection = conn
+		self.permanentUser = False
+		self.chatrooms = []
 		
 	def get_username(self):
 		return self.username
 	
-	def get_user_status(self, user):
-		if user in self.userList:
-			return "Active"
-		else: 
-			self.guestUser = True
-			return "Inactive"
+	def get_connection(self):
+		return self.connection
+	
+	def set_connection(self, conn):
+		self.connection = conn
+	
+	#Returns true if permanent user, or false if guest
+	def get_permanent_user(self):
+		return self.permanentUser
+	
+	def make_permanent(self):
+		self.permanentUser = True
 	
 	def get_chat_rooms(self):
-		return self.chatroom[:]
-		
-	def add_chat_room(self,room):
-            if room in self.chatroom:
+		return self.chatrooms[:]
+	
+	#Appends the chatroom to the list of chatrooms.
+	#Returns false if user is already in the room
+	def add_chatroom(self,room):
+            if room in self.chatrooms:
                 return False
-            self.chatroom.append(room)
+            self.chatrooms.append(room)
             return True
 		
-	def leave_chatroom(self,user):
-            if user not in self.userList:
+	def leave_chatroom(self,room):
+            if room not in self.chatrooms:
                 return False
-            self.userList.remove(user)
+            self.chatrooms.remove(room)
             return True
 			
 if __name__ == "__main__":
 
 	print "Testing"	
-	u = user("BOB")
+	u = user("BOB", "conn") #Dummy testing for connection.
 	print "Username:" + u.get_username()
 	
-	
-	print ""
-	print "Adding user to userList"
-	u.userList.append("BOB")
-	print "UserList:"
-	print u.userList
-	
-	print ""	
-	print "User Status:" + u.get_user_status("BOB")
-	
-	u.chatroom.append("room1")
+	u.chatrooms.append("room1")
 	print ""
 	print "Chatrooms:"
 	print u.get_chat_rooms()
 	print "Now adding another room:"
-	u.add_chat_room("room4")	
+	u.add_chat_room("room4")
 	print u.get_chat_rooms()
 	print ""
 	
-	
-	print "Current UserList:"
-	print u.userList	
-	u.leave_chatroom("BOB")
-	print "removing user from userList"
-	print "new User List:"
-	print u.userList
 	
 	
 	
