@@ -1,19 +1,21 @@
 import socket
 import sys
 import threading
+from GUITest import GUI
 
 #Continuously look for input as a second thread. Stash any results in global z
 def check_for_input():
 	global z
 	try:
 		while True:
-			z = raw_input("")
+			#z = raw_input("")
+			z = GUI.gui_input()
 	except KeyboardInterrupt:
 		s.shutdown(socket.SHUT_RDWR)
 		s.close()
 
-	
 
+gui = GUI()
 s = socket.socket()
 host = socket.gethostname()
 port = 9999
@@ -37,6 +39,6 @@ while True:
 		#No input received
 		pass
 	if z is not None:
-		s.send(z)
+		for i in z:
+			s.send(z)
 		z = None
-	
