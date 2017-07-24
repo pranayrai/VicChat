@@ -10,10 +10,7 @@ host = socket.gethostname()
 port = 9999
 s.bind((host, port))
 
-c = None
-c2 = None
-global c3 
-global addr3
+
 clients = []
 database = server_database()
 
@@ -27,11 +24,6 @@ def listen_input():
 			except(socket.timeout):
 				#If the socket times out, there isn't any input from c1
 				pass
-			except socket.error as e:
-				print 'lost connection from', addr
-				c.close()
-				c, addr = reconnect(c, addr)
-				c.settimeout(1)
 
 
 def listen_connections():
@@ -56,14 +48,14 @@ def get_username(c):
 	c.send("Enter a username")
 	while True:
 		q = c.recv(1024)
-		if database.add_user(q):
+		if database.add_user(q, c):
 			c.settimeout(0.001)
 			clients.append((c, q))
 			break
 		c.send("Username invalid/already taken. Please try another username")
 		
 
-def reconnect(c3, addr3):
+"""def reconnect(c3, addr3):
 	s.settimeout(1)
 	print('[Waiting for connection...]')
     #while True:
@@ -71,13 +63,21 @@ def reconnect(c3, addr3):
 	c3, addr3 = s.accept()
 	print 'Got connection from', addr3
 	c3.send(w)
-	return c3, addr3
+	return c3, addr3"""
 
 
-#This causes all socket operations on s to timeout (Throw a socket.timemout exception)
-#if more than the set time passes.
-c.settimeout(1)
-c2.settimeout(1)
+
+def update_clients(li, msg, arg):
+	str = arg + " " + msg
+	for item in li:
+		try:
+			item[1].send(str)
+		except socket.error as e:
+			database.remove_user(item[0])
+			for cli in clients:
+				if cli[0] == item[0]:
+					clients.remove(cli)
+					break
 
 
 def process_message(c, str):
@@ -89,7 +89,25 @@ def process_message(c, str):
 	input = re.search('^/([a-z]+) -([a-z]+) ?(.*)$', str) 
 	if input is None:
 		c.send("Incorrect input format")
-	return 
+		return 
+	cmd = input[1]
+	arg = input[2]
+	if cmd == "addmessage":
+		list = database.add(input[3], arg)
+		if list:
+			update_clients(list, input[3], arg)
+		else:
+			c.send("The chat room does not exist")
+	elif cmd == "joinchatroom":
+		database.link_user_chatroom(c[0], arg)
+	elif cmd == "leavechatroom":
+		database.unlink_user_chatroom(c[0], arg)
+	elif cmd == "createchatroom":
+		database.add_chatroom(arg)
+		database.link_user_chatroom(c[0], arg)
+	else:
+		c.send("Invalid command")
+
 
 
 			
