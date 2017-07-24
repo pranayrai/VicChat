@@ -4,6 +4,7 @@ import threading
 import time
 import re
 from Server_database import server_database
+
 s = socket.socket()
 host = socket.gethostname()
 port = 9999
@@ -16,8 +17,22 @@ global addr3
 clients = []
 database = server_database()
 
-threading.Thread(target = listen_input).start()
-threading.Thread(target = listen_connections).start()
+def listen_input():
+	while True:
+		q = None
+		for c, u in clients:
+			try:
+				q = c.recv(1024)
+				process_message(c, q)
+			except(socket.timeout):
+				#If the socket times out, there isn't any input from c1
+				pass
+			except socket.error as e:
+				print 'lost connection from', addr
+				c.close()
+				c, addr = reconnect(c, addr)
+				c.settimeout(1)
+
 
 def listen_connections():
 	s.listen(5)
@@ -30,6 +45,12 @@ def listen_connections():
 		w = 'Connected. You can start chatting now!'
 		c.send(w)
 		
+		
+		
+threading.Thread(target = listen_input).start()
+threading.Thread(target = listen_connections).start()
+
+
 
 def get_username(c):
 	c.send("Enter a username")
@@ -58,22 +79,7 @@ def reconnect(c3, addr3):
 c.settimeout(1)
 c2.settimeout(1)
 
-def listen_input():
-	while True:
-		q = None
-		for c, u in clients:
-			try:
-				q = c.recv(1024)
-				process_message(c, q)
-			except(socket.timeout):
-				#If the socket times out, there isn't any input from c1
-				pass
-			except socket.error as e:
-				print 'lost connection from', addr
-				c.close()
-				c, addr = reconnect(c, addr)
-				c.settimeout(1)
-		
+
 def process_message(c, str):
 	"""
 	- check if the string starts with a /
