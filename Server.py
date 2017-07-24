@@ -2,76 +2,86 @@ import socket
 import sys
 import threading
 import time
-
+import re
+from Server_database import server_database
 s = socket.socket()
 host = socket.gethostname()
 port = 9999
 s.bind((host, port))
 
-s.listen(5)
 c = None
 c2 = None
-c3 = None
-print('[Waiting for connection...]')
-while c is None:
-		c, addr = s.accept()
-print 'Got connection from', addr
-w = 'Connected. You can start chatting now!'
-c.send(w)
-		
-while c2 is None:
-	c2, addr2 = s.accept()
-print 'Got connection from', addr2
-c2.send(w)
+global c3 
+global addr3
+global clients = []
+global database = server_databse()
 
-def reconnect():
-    toBreak = False
-    while True:
-        s.close()
-        c3, addr3 = s.accept()
-        print 'Got connection from', addr3
-        toBreak = True       
-        if toBreak:
-            break
-    	time.sleep(1)
+threading.Thread(target = listen_input).start()
+threading.Thread(target = listen_connections).start()
+
+def listen_connections()
+	s.listen(5)
+	print('[Waiting for connection...]')
+	while True:
+		c, addr = s.accept()
+		clients.append(c)
+		print 'Got connection from', addr
+		w = 'Connected. You can start chatting now!'
+		threading.Thread(target = get_usernames, args=(c)).start()
+		c.send(w)
+		
+
+def get_username(c):
+	c.send("Enter a username")
+	while True:
+		q = c.recv(1024)
+		if database.add_user(q):
+			c.settimeout(0.001)
+			clients.append((c, q))
+			break
+		c.send("Username invalid/already taken. Please try another username")
+		
+
+def reconnect(c3, addr3):
+	s.settimeout(1)
+    print('[Waiting for connection...]')
+    #while True:
+    #s.close()
+    c3, addr3 = s.accept()
+    print 'Got connection from', addr3
+    c3.send(w)
+    return c3, addr3
 
 
 #This causes all socket operations on s to timeout (Throw a socket.timemout exception)
 #if more than the set time passes.
-c.settimeout(0.01)
-c2.settimeout(0.01)
+c.settimeout(1)
+c2.settimeout(1)
 
-while True:
-	try:
+def listen_input():
+	while True:
 		q = None
-		if c is not None:
-			# Halts
-			#print '[Waiting for response...]'
-		
-			#print 'receiving data from %s'%ad
+		for c, u in clients:
 			try:
 				q = c.recv(1024)
-				c2.send(q)
+				process_message(c, q)
 			except(socket.timeout):
 				#If the socket times out, there isn't any input from c1
 				pass
-	except socket.error as e:
-		print 'lost connection from', addr
-		reconnect()
+			except socket.error as e:
+				print 'lost connection from', addr
+				c.close()
+				c, addr = reconnect(c, addr)
+				c.settimeout(1)
 		
-	try:	
-		if c2 is not None:
-			# Halts
-			#print '[Waiting for response...]'
-	
-			#print 'receiving data from %s'%ad
-			try:
-				q = c2.recv(1024)
-				c.send(q)
-			except(socket.timeout):
-				#If the socket times out, there isn't any input from c2
-				pass
-	except socket.error as e:
-		print 'Lost connection from', addr2
-		reconnect()
+def process_message(c, str):
+	"""
+	- check if the string starts with a /
+	- there will always be atleast one argument
+	- first string = word starting with / (command)
+	"""
+	input = re.search('^/([a-z]+) -([a-z]+) ?(.*)$', str) 
+	if input is None:
+		c.send("Incorrect input format")
+	return 
 			
