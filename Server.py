@@ -13,13 +13,13 @@ c = None
 c2 = None
 global c3 
 global addr3
-global clients = []
-global database = server_database()
+clients = []
+database = server_database()
 
 threading.Thread(target = listen_input).start()
 threading.Thread(target = listen_connections).start()
 
-def listen_connections()
+def listen_connections():
 	s.listen(5)
 	print('[Waiting for connection...]')
 	while True:
@@ -44,13 +44,13 @@ def get_username(c):
 
 def reconnect(c3, addr3):
 	s.settimeout(1)
-    print('[Waiting for connection...]')
+	print('[Waiting for connection...]')
     #while True:
     #s.close()
-    c3, addr3 = s.accept()
-    print 'Got connection from', addr3
-    c3.send(w)
-    return c3, addr3
+	c3, addr3 = s.accept()
+	print 'Got connection from', addr3
+	c3.send(w)
+	return c3, addr3
 
 
 #This causes all socket operations on s to timeout (Throw a socket.timemout exception)
@@ -84,5 +84,6 @@ def process_message(c, str):
 	if input is None:
 		c.send("Incorrect input format")
 	return 
+
 
 			
