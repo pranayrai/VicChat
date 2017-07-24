@@ -112,11 +112,13 @@ class server_database:
 	#does not exist
 	def unlink_user_chat_room(self, userName, roomName):
 		for r in self.chatrooms:
-			if r.get_name == roomName:
-				for u in r.get_user_list:
-					r.remove_user(u)
-					u.leave_chatroom(r)
-					return True
+			if r.get_name() == roomName:
+				for u in r.get_user_list():
+					if u.get_username() == userName:
+						r.remove_user(u)
+						u.leave_chatroom(r)
+						return True
+				return False
 		return False
 	
 #Runs a suite of tests
@@ -159,6 +161,11 @@ def main():
 	assert not data.link_user_chat_room("Bob", "general")
 	assert not data.link_user_chat_room("Ryan", "room3")
 	assert not data.link_user_chat_room("Jason", "general")
+	
+	assert data.unlink_user_chat_room("Ryan", "general")
+	assert not data.unlink_user_chat_room("Ryan", "general")
+	assert not data.unlink_user_chat_room("Bob", "random")
+	assert len(data.chatrooms[0].get_user_list()) == 2
 	
 	
 main()
