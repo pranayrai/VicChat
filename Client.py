@@ -9,7 +9,7 @@ def check_for_input():
 	try:
 		while True:
 			#z = raw_input("")
-			z = GUI.gui_input()
+			z = gui.gui_input()
 	except KeyboardInterrupt:
 		s.shutdown(socket.SHUT_RDWR)
 		s.close()
@@ -34,7 +34,8 @@ threading.Thread(target = check_for_input).start()
 #Continuously look for user and server messages
 while True:
 	try:
-		print '\n'+'\t'+'\t'+s.recv(1024)
+		#print '\n'+'\t'+'\t'+s.recv(1024)
+		gui.gui_output(None,s.recv(1024))
 	except (socket.timeout):
 		#No input received
 		pass
