@@ -28,7 +28,7 @@ class user():
 	def make_permanent(self):
 		self.permanentUser = True
 	
-	def get_chatrooms(self):
+	def get_chat_rooms(self):
 		return self.chatrooms[:]
 	
 	#Appends the chatroom to the list of chatrooms.
@@ -54,10 +54,10 @@ if __name__ == "__main__":
 	u.chatrooms.append("room1")
 	print ""
 	print "Chatrooms:"
-	print u.get_chatrooms()
+	print u.get_chat_rooms()
 	print "Now adding another room:"
 	u.add_chatroom("room4")
-	print u.get_chatrooms()
+	print u.get_chat_rooms()
 	print ""
 	
 	
