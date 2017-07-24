@@ -9,7 +9,7 @@ class server_database:
 		self.chatrooms = []
 		self.users = []
 	
-	def add_chat_room(self, name):
+	def add_chatroom(self, name):
 		for r in self.chatrooms:
 			if r.get_name() == name:
 				return False
@@ -93,7 +93,7 @@ class server_database:
 	
 	#Links a user to a chat room, and returns the chat room history
 	#Returns false if the user or room cannot be found or if they are already linked
-	def link_user_chat_room(self, userName, roomName):
+	def link_user_chatroom(self, userName, roomName):
 		for r in self.chatrooms:
 			if r.get_name() == roomName:
 				for u in r.get_user_list():
@@ -110,7 +110,7 @@ class server_database:
 	#Unlinks a user from a chat room
 	#Returns false if the user isn't in the chat room, or if the chat room
 	#does not exist
-	def unlink_user_chat_room(self, userName, roomName):
+	def unlink_user_chatroom(self, userName, roomName):
 		for r in self.chatrooms:
 			if r.get_name() == roomName:
 				for u in r.get_user_list():
@@ -126,10 +126,10 @@ def main():
 	data = server_database()
 	
 	#Check that adding chatrooms is working correctly
-	assert data.add_chat_room("general")
-	assert data.add_chat_room("random")
-	assert not data.add_chat_room("general")
-	assert data.add_chat_room("room3")
+	assert data.add_chatroom("general")
+	assert data.add_chatroom("random")
+	assert not data.add_chatroom("general")
+	assert data.add_chatroom("room3")
 	temp = data.list_chat_rooms()
 	assert len(temp) == 3
 	assert temp[0].get_name() == "general"
@@ -155,16 +155,16 @@ def main():
 	assert temp[1][0] == "Ryan"
 	assert temp[2][0] == "Daniel"
 	
-	assert data.link_user_chat_room("Bob", "general")
-	assert data.link_user_chat_room("Ryan", "general")
-	assert data.link_user_chat_room("Daniel", "general")
-	assert not data.link_user_chat_room("Bob", "general")
-	assert not data.link_user_chat_room("Ryan", "room3")
-	assert not data.link_user_chat_room("Jason", "general")
+	assert data.link_user_chatroom("Bob", "general")
+	assert data.link_user_chatroom("Ryan", "general")
+	assert data.link_user_chatroom("Daniel", "general")
+	assert not data.link_user_chatroom("Bob", "general")
+	assert not data.link_user_chatroom("Ryan", "room3")
+	assert not data.link_user_chatroom("Jason", "general")
 	
-	assert data.unlink_user_chat_room("Ryan", "general")
-	assert not data.unlink_user_chat_room("Ryan", "general")
-	assert not data.unlink_user_chat_room("Bob", "random")
+	assert data.unlink_user_chatroom("Ryan", "general")
+	assert not data.unlink_user_chatroom("Ryan", "general")
+	assert not data.unlink_user_chatroom("Bob", "random")
 	assert len(data.chatrooms[0].get_user_list()) == 2
 	
 	
