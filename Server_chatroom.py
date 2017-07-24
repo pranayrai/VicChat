@@ -4,9 +4,9 @@ class server_chatroom(chatroom):
 	userList = None
 	
 	def __init__(self, n):
-		self.userList = []
 		self.messageHistory = []
 		self.length = 0
+		self.userList = []
 		self.name = n
 	
 	def add_user(self, u):
