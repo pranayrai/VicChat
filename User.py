@@ -33,7 +33,7 @@ class user():
 	
 	#Appends the chatroom to the list of chatrooms.
 	#Returns false if user is already in the room
-	def add_chatroom(self,room):
+	def add_chat_room(self,room):
             if room in self.chatrooms:
                 return False
             self.chatrooms.append(room)
