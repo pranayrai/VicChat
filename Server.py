@@ -14,7 +14,7 @@ c2 = None
 global c3 
 global addr3
 global clients = []
-global database = server_databse()
+global database = server_database()
 
 threading.Thread(target = listen_input).start()
 threading.Thread(target = listen_connections).start()
@@ -26,8 +26,8 @@ def listen_connections()
 		c, addr = s.accept()
 		clients.append(c)
 		print 'Got connection from', addr
-		w = 'Connected. You can start chatting now!'
 		threading.Thread(target = get_usernames, args=(c)).start()
+		w = 'Connected. You can start chatting now!'
 		c.send(w)
 		
 
@@ -84,4 +84,5 @@ def process_message(c, str):
 	if input is None:
 		c.send("Incorrect input format")
 	return 
+
 			
