@@ -18,24 +18,24 @@ class GUIWindow(QWidget):
         if ok:
             self.rooms.addItem(text)
             self.rooms.setCurrentIndex(self.rooms.count()-1)
-            self.client.send_message("Creating room: {}.".format(self.rooms.currentText()))
-            self.client.send_message("Leaving room: {}.".format(self.currentRoom))
-            self.client.send_message("Joining room: {}.".format(self.rooms.currentText()))
+            self.client.send_message(self.rooms.currentText())
+            self.client.send_message(self.currentRoom)
+            self.client.send_message(self.rooms.currentText())
             self.currentRoom = self.rooms.currentText()
         #self.commands.append("New room: " + text)
 
     # This is called when the room selection is changed
     @pyqtSlot()
     def change_room(self):
-        self.client.send_message("Leaving room: {}.".format(self.rooms.currentText()))
-        self.client.send_message("Joining room: {}.".format(self.rooms.currentText()))
+        self.client.send_message(self.rooms.currentText())
+        self.client.send_message(self.rooms.currentText())
         self.outputBox.clear()
         self.currentRoom = self.rooms.currentText()
 
     # Sends the message to the server, then clears the inputBox.
     @pyqtSlot()
     def on_press_print(self):
-        self.client.send_message("Sending message to {}: {}.".format(self.currentRoom,self.inputBox.text()))
+        self.client.send_message(self.inputBox.text())
         self.inputBox.clear()
 
 
