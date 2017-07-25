@@ -12,6 +12,7 @@ class Client(QObject):
 	errorSignal = pyqtSignal()
 	z = None
 	s = socket.socket()
+	room = None
 
 	@pyqtSlot()
 	def run(self):
@@ -19,6 +20,7 @@ class Client(QObject):
 		self.s = socket.socket()
 		host = socket.gethostname()
 		port = 9999
+		self.room = "General"
 		try:
 			self.s.connect((host, port))
 		except:
@@ -32,9 +34,11 @@ class Client(QObject):
 		#Continuously look for user and server messages
 		while True:
 			try:
-				self.messageSignal.emit(self.s.recv(1024))
-				#print '\n'+'\t'+'\t'+s.recv(1024)
-				#gui.gui_output(None,s.recv(1024))
+				received = self.s.recv(1024)
+
+
+
+				self.messageSignal.emit(received)
 			except (socket.timeout):
 				#No input received
 				pass
@@ -44,8 +48,18 @@ class Client(QObject):
 				self.z = None
 
 	def send_message(self,msg):
-		self.z = msg
-		#print msg
+		self.z = "/addmessage -{} {}".format(self.room,msg)
+
+	def create_room(self,msg):
+		self.z = "/createchatroom -{}".format(msg)
+
+	def leave_room(self,msg):
+		self.z = "/leavechatroom -{}".format(msg)
+		self.room = None
+
+	def join_room(self,msg):
+		self.z = "/joinchatroom -{}".format(msg)
+		self.room = msg
 
 
 
