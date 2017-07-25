@@ -39,7 +39,7 @@ class Client(QObject):
 				#No input received
 				pass
 			if self.z is not None:
-				#s.send(self.z)
+				self.s.send(self.z)
 				print self.z
 				self.z = None
 
