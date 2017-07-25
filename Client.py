@@ -48,17 +48,17 @@ class Client(QObject):
 				self.z = None
 
 	def send_message(self,msg):
-		self.z = "/addmessage -{} {}".format(self.room,msg)
+		self.z = "/addmessage {} {}".format(self.room,msg)
 
 	def create_room(self,msg):
-		self.z = "/createchatroom -{}".format(msg)
+		self.z = "/createchatroom {}".format(msg)
 
 	def leave_room(self,msg):
-		self.z = "/leavechatroom -{}".format(msg)
+		self.z = "/leavechatroom {}".format(msg)
 		self.room = None
 
 	def join_room(self,msg):
-		self.z = "/joinchatroom -{}".format(msg)
+		self.z = "/joinchatroom {}".format(msg)
 		self.room = msg
 
 
