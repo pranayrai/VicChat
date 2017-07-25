@@ -11,16 +11,16 @@ class Client(QObject):
 	messageSignal = pyqtSignal(str)
 	errorSignal = pyqtSignal()
 	z = None
+	s = socket.socket()
 
 	@pyqtSlot()
 	def run(self):
 		print "server running!"
-		s = socket.socket()
+		self.s = socket.socket()
 		host = socket.gethostname()
 		port = 9999
-		self.errorSignal.emit()
 		try:
-			s.connect((host, port))
+			self.s.connect((host, port))
 		except:
 			self.errorSignal.emit()
 			return
@@ -28,19 +28,19 @@ class Client(QObject):
 		self.z = None
 		#This causes all socket operations on s to timeout (Throw a socket.timemout exception)
 		#if more than the set time passes
-		s.settimeout(0.01)
+		self.s.settimeout(0.01)
 		#Continuously look for user and server messages
 		while True:
 			try:
-				self.messageSignal.emit(s.recv(1024))
+				self.messageSignal.emit(self.s.recv(1024))
 				#print '\n'+'\t'+'\t'+s.recv(1024)
 				#gui.gui_output(None,s.recv(1024))
 			except (socket.timeout):
 				#No input received
 				pass
 			if self.z is not None:
-				s.send(z)
-				print z
+				#s.send(self.z)
+				print self.z
 				self.z = None
 
 	def send_message(self,msg):

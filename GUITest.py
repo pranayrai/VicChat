@@ -11,9 +11,8 @@ from Client import Client
 
 
 class GUIWindow(QWidget):
-
-
     # This is called when the new room button is pressed
+    @pyqtSlot()
     def new_room(self):
         text, ok = QInputDialog.getText(self, 'Create new room', 'Enter a room name:')
         if ok:
@@ -22,6 +21,7 @@ class GUIWindow(QWidget):
         #self.commands.append("New room: " + text)
 
     # This is called when the room selection is changed
+    @pyqtSlot()
     def change_room(self):
         print "Changing room to {}...".format(self.rooms.currentText())
         self.outputBox.clear()
@@ -35,8 +35,46 @@ class GUIWindow(QWidget):
         self.inputBox.clear()
         #self.commands.append("New message: " + message)
 
+    def change_windows(self):
+        self.login.hide()
+        #self.app.setStyle(QStyleFactory.create(themeList.currentText()))
+        self.username = self.nameInput.text()
+        self.show()
+
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
+
+        '''self.username = ''
+        self.login = QWidget()
+        loginLayout = QVBoxLayout()
+        nameLabel = QLabel(self.login)
+        nameLabel.setText("Enter a Username:")
+        loginLayout.addWidget(nameLabel)
+        self.nameInput = QLineEdit(self.login)
+        self.nameInput.setPlaceholderText("enter name here")
+        loginLayout.addWidget(self.nameInput)
+
+        themeLabel = QLabel(self.login)
+        themeLabel.setText("Choose a theme:")
+        loginLayout.addWidget(themeLabel)
+        themeList = QComboBox(self.login)
+        themeList.addItems(QStyleFactory.keys())
+        loginLayout.addWidget(themeList)
+        # find current style
+        index = themeList.findText(
+                    qApp.style().objectName(),
+                    Qt.MatchFixedString)
+        # set current style
+        themeList.setCurrentIndex(index)
+
+        loginButton = QPushButton('Login', self.login)
+        loginLayout.addWidget(loginButton)
+        self.login.setLayout(loginLayout)
+
+        self.login.show()
+        loginButton.pressed.connect(self.change_windows)
+        self.nameInput.returnPressed.connect(self.change_windows)'''
+
 
         self.setWindowTitle('VicChat GUI prototype')
         self.resize(320,310)
@@ -84,9 +122,7 @@ class GUIWindow(QWidget):
 
         # connect the signals to the slots
 
-
         self.rooms.currentIndexChanged.connect(self.change_room)
-
 
         self.client = Client()
         self.thread = QThread(self)
@@ -106,7 +142,7 @@ class GUIWindow(QWidget):
     def receive_info(self, msg):
         self.outputBox.appendPlainText(msg)
 
-    @pyqtSlot(str)
+    @pyqtSlot()
     def connection_error(self):
         self.outputBox.appendPlainText("Could not connect to server.")
 
@@ -304,6 +340,7 @@ if __name__ == "__main__":
     #gui = GUI()
 
     app = QApplication(sys.argv)
+    app.setStyle(QStyleFactory.create("plastique"))
     test = GUIWindow()
     test.show()
     app.exec_()
