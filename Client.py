@@ -12,6 +12,7 @@ class Client(QObject):
 	errorSignal = pyqtSignal()
 	z = None
 	s = socket.socket()
+	
 
 	@pyqtSlot()
 	def run(self):
@@ -46,6 +47,7 @@ class Client(QObject):
 	def send_message(self,msg):
 		self.z = msg
 		#print msg
+
 
 
 

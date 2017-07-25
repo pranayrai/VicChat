@@ -18,18 +18,24 @@ class GUIWindow(QWidget):
         if ok:
             self.rooms.addItem(text)
             self.rooms.setCurrentIndex(self.rooms.count()-1)
+            self.client.send_message("Creating room: {}.".format(self.rooms.currentText()))
+            self.client.send_message("Leaving room: {}.".format(self.currentRoom))
+            self.client.send_message("Joining room: {}.".format(self.rooms.currentText()))
+            self.currentRoom = self.rooms.currentText()
         #self.commands.append("New room: " + text)
 
     # This is called when the room selection is changed
     @pyqtSlot()
     def change_room(self):
-        self.client.send_message("Changing room to {}...".format(self.rooms.currentText()))
+        self.client.send_message("Leaving room: {}.".format(self.rooms.currentText()))
+        self.client.send_message("Joining room: {}.".format(self.rooms.currentText()))
         self.outputBox.clear()
+        self.currentRoom = self.rooms.currentText()
 
     # Sends the message to the server, then clears the inputBox.
     @pyqtSlot()
     def on_press_print(self):
-        self.client.send_message(self.inputBox.text())
+        self.client.send_message("Sending message to {}: {}.".format(self.currentRoom,self.inputBox.text()))
         self.inputBox.clear()
 
 
@@ -42,8 +48,10 @@ class GUIWindow(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
 
-        '''self.username = ''
-        self.login = QWidget()
+        self.username = ''
+        self.currentRoom = ''
+
+        '''self.login = QWidget()
         loginLayout = QVBoxLayout()
         nameLabel = QLabel(self.login)
         nameLabel.setText("Enter a Username:")
@@ -72,6 +80,7 @@ class GUIWindow(QWidget):
         self.login.show()
         loginButton.pressed.connect(self.change_windows)
         self.nameInput.returnPressed.connect(self.change_windows)'''
+
 
         # Name and resize the main window
         self.setWindowTitle('VicChat GUI prototype')
@@ -116,6 +125,7 @@ class GUIWindow(QWidget):
 
         self.setLayout(self.layout)
 
+        self.currentRoom = self.rooms.currentText()
 
         # SET UP THE CLIENT IN A NEW THREAD:
         self.client = Client()
