@@ -49,7 +49,6 @@ class Client(QObject):
 
 	def send_message(self,msg):
 		self.z = "/addmessage -{} {}".format(self.room,msg)
-		#print msg
 
 	def create_room(self,msg):
 		self.z = "/createchatroom -{}".format(msg)
@@ -61,7 +60,6 @@ class Client(QObject):
 	def join_room(self,msg):
 		self.z = "/joinchatroom -{}".format(msg)
 		self.room = msg
-
 
 
 
