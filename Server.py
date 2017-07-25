@@ -10,9 +10,10 @@ host = socket.gethostname()
 port = 9999
 s.bind((host, port))
 
-
 clients = []
 database = server_database()
+database.add_chatroom('general')
+
 
 def listen_input():
 	while True:
@@ -20,7 +21,7 @@ def listen_input():
 		for c, u in clients:
 			try:
 				q = c.recv(1024)
-				process_message(c, q)
+				process_message(c, u, q)
 			except(socket.timeout):
 				#If the socket times out, there isn't any input from c1
 				pass
@@ -28,48 +29,36 @@ def listen_input():
 
 def listen_connections():
 	s.listen(5)
-	print('[Waiting for connection...]')
+	print('[Waiting for connections...]')
 	while True:
 		c, addr = s.accept()
 		print 'Got connection from', addr
 		threading.Thread(target = get_username, args=(c,)).start()
-		w = 'Connected. You can start chatting now!'
-		c.send(w)
-
-
 
 threading.Thread(target = listen_input).start()
 threading.Thread(target = listen_connections).start()
-
 
 
 def get_username(c):
 	c.send("Enter a username")
 	try:
 		while True:
-			q = c.recv(1024)
-			if database.add_user(q, c):
+			msg = c.recv(1024)
+			y = msg.split()
+			if len(y) < 3:
+				c.send("/error Incorrect message format. Please update the client")
+				continue
+			name = str(y[2])
+			if name and database.add_user(name, c):
 				c.settimeout(0.001)
-				clients.append((c, q))
+				clients.append((c, name))
+				database.link_user_chatroom(name, 'general')
 				break
-			c.send("Username invalid/already taken. Please try another username")
-		w = 'Connected. You can start chatting now!'
-		c.send(w)
+			c.send("/error Username already exists. Try a different username")
+		c.send('Connected to "general." You can start chatting now!')
 	except socket.error:
 		pass
 		
-
-"""def reconnect(c3, addr3):
-	s.settimeout(1)
-	print('[Waiting for connection...]')
-    #while True:
-    #s.close()
-	c3, addr3 = s.accept()
-	print 'Got connection from', addr3
-	c3.send(w)
-	return c3, addr3"""
-
-
 
 def update_clients(li, msg, arg):
 	str = arg + " " + msg
@@ -84,30 +73,34 @@ def update_clients(li, msg, arg):
 					break
 
 
-def process_message(c, str):
+def process_message(c, username, msg):
 	"""
 	- check if the string starts with a /
 	- there will always be atleast one argument
 	- first string = word starting with / (command)
 	"""
-	input = re.search('^/([a-z]+) -([a-z]+) ?(.*)$', str)
-	if input is None:
-		c.send("Incorrect input format")
+	y = msg.split()
+	if len(y) < 3:
+		c.send("/error Incorrect message format. Please update the client")
 		return
-	cmd = input[1]
-	arg = input[2]
-	if cmd == "addmessage":
-		list = database.add(input[3], arg)
-		if list:
-			update_clients(list, input[3], arg)
+	cmd = str(y[0])
+	arg = str(y[1])
+	text = str(y[2:])
+	if cmd is None:
+		c.send("/error Incorrect input format")
+		return
+	if cmd == "/addmessage":
+		li = database.add_message(username + ": " + text, arg)
+		if li:
+			update_clients(li, text, arg)
 		else:
 			c.send("The chat room does not exist")
-	elif cmd == "joinchatroom":
-		database.link_user_chatroom(c[0], arg)
-	elif cmd == "leavechatroom":
-		database.unlink_user_chatroom(c[0], arg)
-	elif cmd == "createchatroom":
+	elif cmd == "/joinchatroom":
+		database.link_user_chatroom(username, arg)
+	elif cmd == "/leavechatroom":
+		database.unlink_user_chatroom(username, arg)
+	elif cmd == "/createchatroom":
 		database.add_chatroom(arg)
-		database.link_user_chatroom(c[0], arg)
+		database.link_user_chatroom(username, arg)
 	else:
-		c.send("Invalid command")
+		c.send("/error Invalid command")
