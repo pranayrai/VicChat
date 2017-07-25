@@ -23,7 +23,7 @@ class Client(QObject):
 			s.connect((host, port))
 		except:
 			self.errorSignal.emit()
-			#return False
+			return
 		print 'Connected to', host
 		self.z = None
 		#This causes all socket operations on s to timeout (Throw a socket.timemout exception)
@@ -42,7 +42,7 @@ class Client(QObject):
 				s.send(z)
 				print z
 				self.z = None
-				
+
 	def send_message(self,msg):
 		self.z = msg
 		#print msg

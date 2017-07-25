@@ -91,7 +91,7 @@ class GUIWindow(QWidget):
         self.client = Client()
         self.thread = QThread(self)
         self.client.messageSignal.connect(self.receive_info)
-        self.client.messageSignal.connect(self.connection_error)
+        self.client.errorSignal.connect(self.connection_error)
         self.client.moveToThread(self.thread)
         self.thread.started.connect(self.client.run)
 
@@ -109,7 +109,12 @@ class GUIWindow(QWidget):
     @pyqtSlot(str)
     def connection_error(self):
         self.outputBox.appendPlainText("Could not connect to server.")
-        self.thread.terminate()
+
+
+
+
+# --- EVERYTHING BELOW THIS LINE IS OLD AND NOT USED ---
+
 
 
 class GUI:
