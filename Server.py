@@ -43,15 +43,19 @@ threading.Thread(target = listen_connections).start()
 
 def get_username(c):
 	c.send("Enter a username")
-	while True:
-		q = c.recv(1024)
-		if database.add_user(q, c):
-			c.settimeout(0.001)
-			clients.append((c, q))
-			break
-		c.send("Username invalid/already taken. Please try another username")
-	w = 'Connected. You can start chatting now!'
-	c.send(w)
+	try:
+		while True:
+			q = c.recv(1024)
+			if database.add_user(q, c):
+				c.settimeout(0.001)
+				clients.append((c, q))
+				break
+			c.send("Username invalid/already taken. Please try another username")
+		w = 'Connected. You can start chatting now!'
+		c.send(w)
+	except socket.error:
+		pass
+		
 		
 
 """def reconnect(c3, addr3):
