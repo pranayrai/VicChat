@@ -32,7 +32,7 @@ def listen_connections():
 	while True:
 		c, addr = s.accept()
 		print 'Got connection from', addr
-		threading.Thread(target = get_usernames, args=(c)).start()
+		threading.Thread(target = get_username, args=(c,)).start()
 		w = 'Connected. You can start chatting now!'
 		c.send(w)
 
