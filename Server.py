@@ -31,11 +31,8 @@ def listen_connections():
 	print('[Waiting for connection...]')
 	while True:
 		c, addr = s.accept()
-		clients.append(c)
 		print 'Got connection from', addr
-		threading.Thread(target = get_usernames, args=(c)).start()
-		w = 'Connected. You can start chatting now!'
-		c.send(w)
+		threading.Thread(target = get_username, args=(c,)).start()
 		
 		
 		
@@ -53,6 +50,8 @@ def get_username(c):
 			clients.append((c, q))
 			break
 		c.send("Username invalid/already taken. Please try another username")
+	w = 'Connected. You can start chatting now!'
+	c.send(w)
 		
 
 """def reconnect(c3, addr3):
