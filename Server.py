@@ -32,10 +32,12 @@ def listen_connections():
 	while True:
 		c, addr = s.accept()
 		print 'Got connection from', addr
-		threading.Thread(target = get_username, args=(c,)).start()
-		
-		
-		
+		threading.Thread(target = get_usernames, args=(c)).start()
+		w = 'Connected. You can start chatting now!'
+		c.send(w)
+
+
+
 threading.Thread(target = listen_input).start()
 threading.Thread(target = listen_connections).start()
 
@@ -55,7 +57,6 @@ def get_username(c):
 		c.send(w)
 	except socket.error:
 		pass
-		
 		
 
 """def reconnect(c3, addr3):
@@ -89,10 +90,10 @@ def process_message(c, str):
 	- there will always be atleast one argument
 	- first string = word starting with / (command)
 	"""
-	input = re.search('^/([a-z]+) -([a-z]+) ?(.*)$', str) 
+	input = re.search('^/([a-z]+) -([a-z]+) ?(.*)$', str)
 	if input is None:
 		c.send("Incorrect input format")
-		return 
+		return
 	cmd = input[1]
 	arg = input[2]
 	if cmd == "addmessage":
@@ -110,7 +111,3 @@ def process_message(c, str):
 		database.link_user_chatroom(c[0], arg)
 	else:
 		c.send("Invalid command")
-
-
-
-			
