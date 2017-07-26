@@ -17,17 +17,17 @@ class GUIWindow(QWidget):
         text, ok = QInputDialog.getText(self, 'Create new room', 'Enter a room name:')
         if ok:
             self.rooms.addItem(text)
-            self.rooms.setCurrentIndex(self.rooms.count()-1)
+            #self.rooms.setCurrentIndex(self.rooms.count()-1)
             self.client.create_room(self.rooms.currentText())
-            self.client.leave_room(self.currentRoom)
-            self.client.join_room(self.rooms.currentText())
-            self.currentRoom = self.rooms.currentText()
+            #self.client.leave_room(self.currentRoom)
+            #self.client.join_room(self.rooms.currentText())
+            #self.currentRoom = self.rooms.currentText()
         #self.commands.append("New room: " + text)
 
     # This is called when the room selection is changed
     @pyqtSlot()
     def change_room(self):
-        self.client.leave_room(self.currentRoom)
+        #self.client.leave_room(self.currentRoom)
         self.client.join_room(self.rooms.currentText())
         self.outputBox.clear()
         self.currentRoom = self.rooms.currentText()
