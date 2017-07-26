@@ -4,11 +4,11 @@ from User import user
 class server_database:
 	chatrooms = None
 	users = None
-	
+
 	def __init__(self):
 		self.chatrooms = []
 		self.users = []
-	
+
 	def add_chatroom(self, name):
 		for r in self.chatrooms:
 			if r.get_name() == name:
@@ -16,7 +16,7 @@ class server_database:
 		room = server_chatroom(name)
 		self.chatrooms.append(room)
 		return True
-		
+
 	def remove_chat_room(self, name):
 		for r in self.chatrooms:
 			if r.get_name() == name:
@@ -31,7 +31,8 @@ class server_database:
 		for i in self.chatrooms:
 			returnVal += i.get_name()
 		return returnVal
-	
+
+
 	#input: message as a string, room name as a string
 	#Returns a list of username/connection tuples,
 	#or false if the chat room doesn't exist
@@ -44,7 +45,7 @@ class server_database:
 					returnVal.append((u.get_username(), u.get_connection()))
 				return returnVal
 		return False
-	
+
 	#Creates a new user object with the desired name, and returns true.
 	#Returns false if the username is already in use.
 	def add_user(self, userName, conn):
@@ -54,7 +55,7 @@ class server_database:
 		newUser = user(userName, conn)
 		self.users.append(newUser)
 		return True
-	
+
 	#Removes a user from the list of users and all chatrooms they are part of
 	#Returns false if the user is not in the list (or offline for permanent users)
 	def remove_user(self, userName):
@@ -78,7 +79,7 @@ class server_database:
 					self.users.remove(u)
 					return True
 		return False
-				
+
 	#Makes a user permanent
 	#Returns false if username is not in list
 	def register_user(self, userName):
@@ -87,14 +88,14 @@ class server_database:
 				u.make_permanent()
 				return True
 		return False
-	
+
 	#Returns a list of all usernames and their connections (in tuple form)
 	def list_users(self):
 		returnVal = []
 		for u in self.users:
 			returnVal.append((u.get_username(), u.get_connection()))
 		return returnVal
-	
+
 	#Links a user to a chat room, and returns the chat room history
 	#Returns false if the user or room cannot be found or if they are already linked
 	def link_user_chatroom(self, userName, roomName):
@@ -110,7 +111,7 @@ class server_database:
 						return True#r.get_history()
 				return False
 		return False
-	
+
 	#Unlinks a user from a chat room
 	#Returns false if the user isn't in the chat room, or if the chat room
 	#does not exist
@@ -124,11 +125,11 @@ class server_database:
 						return True
 				return False
 		return False
-	
+
 #Runs a suite of tests
 def main():
 	data = server_database()
-	
+
 	#Check that adding chatrooms is working correctly
 	assert data.add_chatroom("general")
 	assert data.add_chatroom("random")
@@ -139,11 +140,11 @@ def main():
 	assert temp[0].get_name() == "general"
 	assert temp[1].get_name() == "random"
 	assert temp[2].get_name() == "room3"
-	
+
 	#Remove an empty chatroom
 	data.remove_chat_room("room3")
 	assert len(data.list_chat_rooms()) == 2
-	
+
 	#Add several users, and tests the list_users functionality
 	assert data.add_user("Bob", "blankConn")
 	assert data.add_user("Ryan", "blankConn")
@@ -158,18 +159,19 @@ def main():
 	assert temp[0][1] == "blankConn"
 	assert temp[1][0] == "Ryan"
 	assert temp[2][0] == "Daniel"
-	
+
 	assert data.link_user_chatroom("Bob", "general")
 	assert data.link_user_chatroom("Ryan", "general")
 	assert data.link_user_chatroom("Daniel", "general")
 	assert not data.link_user_chatroom("Bob", "general")
 	assert not data.link_user_chatroom("Ryan", "room3")
 	assert not data.link_user_chatroom("Jason", "general")
-	
+
 	assert data.unlink_user_chatroom("Ryan", "general")
 	assert not data.unlink_user_chatroom("Ryan", "general")
 	assert not data.unlink_user_chatroom("Bob", "random")
 	assert len(data.chatrooms[0].get_user_list()) == 2
+
 	
 if __name__ == "__main__":
 	main()

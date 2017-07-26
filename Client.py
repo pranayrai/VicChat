@@ -3,16 +3,18 @@ import sys
 import threading
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-#from GUITest import GUIWindow
 import time
 
 
 class Client(QObject):
 	messageSignal = pyqtSignal(str)
 	errorSignal = pyqtSignal()
+	roomListSignal = pyqtSignal(str)
 	z = None
 	s = socket.socket()
-	room = None
+	currentRoom = None
+	joinedRooms = []
+	roomList = []
 
 	@pyqtSlot()
 	def run(self):
@@ -35,10 +37,10 @@ class Client(QObject):
 		while True:
 			try:
 				received = self.s.recv(1024)
-
-
-
-				self.messageSignal.emit(received)
+				if received.split()[0] == "/roomlist":
+					self.roomListSignal.emit(received.split()[1:])
+				else:
+					self.messageSignal.emit(received)
 			except (socket.timeout):
 				#No input received
 				pass
@@ -122,16 +124,4 @@ def server_stuff():
 
 if __name__ == "__main__":
 	#Start the input method as a second thread
-	app = QApplication(sys.argv)
-
-	#threading.Thread(target = server_stuff).start()
-	#threading.Thread(target = check_for_input).start()
-
-
-
-	gui = GUIWindow()
-
-
-
-	gui.show()
-	app.exec_()
+	print "START THE APP FROM THE GUI FOOL"
