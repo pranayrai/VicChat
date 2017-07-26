@@ -9,6 +9,7 @@ import time
 class Client(QObject):
 	messageSignal = pyqtSignal(str)
 	errorSignal = pyqtSignal()
+	roomListSignal = pyqtSignal(str)
 	z = None
 	s = socket.socket()
 	currentRoom = None
@@ -36,7 +37,10 @@ class Client(QObject):
 		while True:
 			try:
 				received = self.s.recv(1024)
-				self.messageSignal.emit(received)
+				if received.split()[0] == "/roomlist":
+					self.roomListSignal.emit(received.split()[1:])
+				else:
+					self.messageSignal.emit(received)
 			except (socket.timeout):
 				#No input received
 				pass

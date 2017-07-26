@@ -103,8 +103,8 @@ class GUIWindow(QWidget):
 
         # Create combobox for room list
         self.rooms = QComboBox(self)
-        self.rooms.addItem("General")
-        self.rooms.addItem("Random")
+        self.rooms.addItem("general")
+        #self.rooms.addItem("Random")
 
         # Button to add a new room
         self.addRoomBtn = QPushButton('New Room', self)
@@ -131,6 +131,7 @@ class GUIWindow(QWidget):
         self.client = Client()
         self.thread = QThread(self)
         self.client.messageSignal.connect(self.receive_info)
+        self.client.roomListSignal.connect(self.get_new_room)
         self.client.errorSignal.connect(self.connection_error)
         self.client.moveToThread(self.thread)
         self.thread.started.connect(self.client.run)
@@ -153,6 +154,12 @@ class GUIWindow(QWidget):
     @pyqtSlot()
     def connection_error(self):
         self.outputBox.appendPlainText("Could not connect to server.")
+
+    @pyqtSlot()
+    def get_new_room(self,rooms):
+        for i in rooms:
+            self.rooms.addItem(i)
+
 
     @pyqtSlot()
     def room_list(self,roomList):
