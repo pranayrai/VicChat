@@ -58,6 +58,8 @@ def get_username(c):
 		c.send('/roomlist' + database.list_chatrooms())
 		time.sleep(0.1)
 		c.send('general Connected to "general." You can start chatting now!')
+		time.sleep(0.1)
+		c.send("/history " + database.chatroom_history(arg))
 	except socket.error:
 		pass
 
@@ -102,7 +104,7 @@ def process_message(c, username, msg):
 			c.send("The chat room does not exist")
 	elif cmd == "/joinchatroom":
 		database.link_user_chatroom(username, arg)
-		c.send(database.chatroom_history(arg))
+		c.send("/history " + database.chatroom_history(arg))
 	elif cmd == "/leavechatroom":
 		database.unlink_user_chatroom(username, arg)
 	elif cmd == "/createchatroom":

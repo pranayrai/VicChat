@@ -4,6 +4,7 @@ import threading
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import time
+from Client_database import client_database
 
 
 class Client(QObject):
@@ -15,10 +16,10 @@ class Client(QObject):
 	currentRoom = None
 	joinedRooms = []
 	roomList = []
+	database = client_database()
 
 	@pyqtSlot()
 	def run(self):
-		print "server running!"
 		self.s = socket.socket()
 		host = socket.gethostname()
 		port = 9999
@@ -37,14 +38,24 @@ class Client(QObject):
 		while True:
 			try:
 				received = self.s.recv(1024)
-				x = received.split()
+				x = received.split(" ")
 				if x[0] == "/roomlist":
-					x = x[1:]
-					self.roomListSignal.emit(" ".join(str(i) for i in x))
+					for z in x[1:]:
+						self.database.add_chatroom(z)
+					self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
+				elif x[0] == "/history":
+					y = " ".join(str(i) for i in x[1:])
+					y = y.split('\n')
+					for z in y:
+						if z != '':
+							self.database.add_message(z,self.currentRoom)
+							self.messageSignal.emit(z)
+					#self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == self.currentRoom:
-					x = x[1:]
-					self.messageSignal.emit(" ".join(str(i) for i in x))
+					self.database.add_message(x[1:],x[0])
+					self.messageSignal.emit(" ".join(str(i) for i in x[1:]))
 				else:
+					self.database.add_message(x[1:],x[0])
 					print "A message has been sent to another room:"
 					print received
 
