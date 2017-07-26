@@ -161,7 +161,8 @@ class GUIWindow(QWidget):
         print type(roomList)
         roomList = roomList.split(' ')
         for i in roomList:
-            self.rooms.addItem(i)
+            if i != "general":
+                self.rooms.addItem(i)
 
 
     @pyqtSlot()

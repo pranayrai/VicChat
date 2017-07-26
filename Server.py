@@ -40,7 +40,7 @@ threading.Thread(target = listen_connections).start()
 
 
 def get_username(c):
-	c.send("Enter a username")
+	c.send("general Enter a username")
 	try:
 		while True:
 			msg = c.recv(1024)
@@ -57,7 +57,7 @@ def get_username(c):
 			c.send("/error Username already exists. Try a different username")
 		c.send('/roomlist' + database.list_chatrooms())
 		time.sleep(0.1)
-		c.send('Connected to "general." You can start chatting now!')
+		c.send('general Connected to "general." You can start chatting now!')
 	except socket.error:
 		pass
 
@@ -107,6 +107,6 @@ def process_message(c, username, msg):
 	elif cmd == "/createchatroom":
 		database.add_chatroom(arg)
 		database.link_user_chatroom(username, arg)
-		update_clients(clients, "/listroom " + arg)
+		update_clients(clients, "/roomlist " + arg)
 	else:
 		c.send("/error Invalid command")

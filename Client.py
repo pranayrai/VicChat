@@ -22,7 +22,7 @@ class Client(QObject):
 		self.s = socket.socket()
 		host = socket.gethostname()
 		port = 9999
-		self.room = "general"
+		self.currentRoom = "general"
 		try:
 			self.s.connect((host, port))
 		except:
@@ -37,13 +37,17 @@ class Client(QObject):
 		while True:
 			try:
 				received = self.s.recv(1024)
-				if received.split()[0] == "/listroom":
-					x = received.split()
+				x = received.split()
+				if x[0] == "/roomlist":
 					x = x[1:]
-
 					self.roomListSignal.emit(" ".join(str(i) for i in x))
+				elif x[0] == self.currentRoom:
+					x = x[1:]
+					self.messageSignal.emit(" ".join(str(i) for i in x))
 				else:
-					self.messageSignal.emit(received)
+					print "A message has been sent to another room:"
+					print received
+
 			except (socket.timeout):
 				#No input received
 				pass
@@ -53,18 +57,18 @@ class Client(QObject):
 				self.z = None
 
 	def send_message(self,msg):
-		self.z = "/addmessage {} {}".format(self.room,msg)
+		self.z = "/addmessage {} {}".format(self.currentRoom,msg)
 
 	def create_room(self,msg):
 		self.z = "/createchatroom {}".format(msg)
 
 	def leave_room(self,msg):
 		self.z = "/leavechatroom {}".format(msg)
-		self.room = None
+		self.currentRoom = None
 
 	def join_room(self,msg):
 		self.z = "/joinchatroom {}".format(msg)
-		self.room = msg
+		self.currentRoom = msg
 
 
 
