@@ -42,7 +42,7 @@ class server_database:
 				users = r.add_message(message)
 				returnVal = []
 				for u in users:
-					returnVal.append((u.get_username(), u.get_connection()))
+					returnVal.append((u.get_connection(),u.get_username()))
 				return returnVal
 		return False
 

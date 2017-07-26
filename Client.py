@@ -37,7 +37,7 @@ class Client(QObject):
 		while True:
 			try:
 				received = self.s.recv(1024)
-				if received.split()[0] == "/roomlist":
+				if received.split()[0] == "/listroom":
 					x = received.split()
 					x = x[1:]
 

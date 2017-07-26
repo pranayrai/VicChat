@@ -65,7 +65,7 @@ def get_username(c):
 def update_clients(li, msg):
 	for item in li:
 		try:
-			item[1].send(msg)
+			item[0].send(msg)
 		except socket.error as e:
 			database.remove_user(item[0])
 			for cli in clients:
