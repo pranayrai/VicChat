@@ -26,8 +26,11 @@ class server_database:
 				return True
 		return False
 	
-	def list_chat_rooms(self):
-		return self.chatrooms[:]
+	def list_chatrooms(self):
+		returnVal = ""
+		for i in self.chatrooms:
+			returnVal += i.get_name()
+		return returnVal
 	
 	#input: message as a string, room name as a string
 	#Returns a list of username/connection tuples,
@@ -39,6 +42,7 @@ class server_database:
 				returnVal = []
 				for u in users:
 					returnVal.append((u.get_username(), u.get_connection()))
+				return returnVal
 		return False
 	
 	#Creates a new user object with the desired name, and returns true.
@@ -130,7 +134,7 @@ def main():
 	assert data.add_chatroom("random")
 	assert not data.add_chatroom("general")
 	assert data.add_chatroom("room3")
-	temp = data.list_chat_rooms()
+	temp = data.list_chatrooms()
 	assert len(temp) == 3
 	assert temp[0].get_name() == "general"
 	assert temp[1].get_name() == "random"
@@ -167,5 +171,5 @@ def main():
 	assert not data.unlink_user_chatroom("Bob", "random")
 	assert len(data.chatrooms[0].get_user_list()) == 2
 	
-	
-main()
+if __name__ == "__main__":
+	main()
