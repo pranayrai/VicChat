@@ -44,6 +44,7 @@ class Client(QObject):
 						self.database.add_chatroom(z)
 					self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/history":
+					self.messageSignal.emit("You have joined {}.".format(self.currentRoom))
 					y = " ".join(str(i) for i in x[1:])
 					y = y.split('\n')
 					for z in y:
