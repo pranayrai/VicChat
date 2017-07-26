@@ -56,16 +56,16 @@ def get_username(c):
 				break
 			c.send("/error Username already exists. Try a different username")
 		c.send('/roomlist' + database.list_chatrooms())
+		time.sleep(0.1)
 		c.send('Connected to "general." You can start chatting now!')
 	except socket.error:
 		pass
-		
 
-def update_clients(li, msg, arg):
-	str = arg + " " + msg
+
+def update_clients(li, msg):
 	for item in li:
 		try:
-			item[1].send(str)
+			item[1].send(msg)
 		except socket.error as e:
 			database.remove_user(item[0])
 			for cli in clients:
@@ -97,7 +97,7 @@ def process_message(c, username, msg):
 		messageText = username + ": " + text
 		li = database.add_message(messageText, arg)
 		if li:
-			update_clients(li, messageText, arg)
+			update_clients(li, arg + " " + messageText)
 		else:
 			c.send("The chat room does not exist")
 	elif cmd == "/joinchatroom":

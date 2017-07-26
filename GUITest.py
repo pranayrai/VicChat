@@ -18,7 +18,7 @@ class GUIWindow(QWidget):
         if ok:
             self.rooms.addItem(text)
             #self.rooms.setCurrentIndex(self.rooms.count()-1)
-            self.client.create_room(self.rooms.currentText())
+            self.client.create_room(text)
             #self.client.leave_room(self.currentRoom)
             #self.client.join_room(self.rooms.currentText())
             #self.currentRoom = self.rooms.currentText()
@@ -155,9 +155,9 @@ class GUIWindow(QWidget):
     def connection_error(self):
         self.outputBox.appendPlainText("Could not connect to server.")
 
-    @pyqtSlot()
+    @pyqtSlot(str)
     def get_new_room(self,rooms):
-        for i in rooms:
+        for i in rooms.split():
             self.rooms.addItem(i)
 
 

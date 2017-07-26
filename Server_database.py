@@ -25,11 +25,11 @@ class server_database:
 				self.chatrooms.remove(r)
 				return True
 		return False
-	
+
 	def list_chatrooms(self):
 		returnVal = ""
 		for i in self.chatrooms:
-			returnVal += i.get_name()
+			returnVal += " " + i.get_name()
 		return returnVal
 
 
@@ -172,6 +172,6 @@ def main():
 	assert not data.unlink_user_chatroom("Bob", "random")
 	assert len(data.chatrooms[0].get_user_list()) == 2
 
-	
+
 if __name__ == "__main__":
 	main()
