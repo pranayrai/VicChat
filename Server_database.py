@@ -31,8 +31,18 @@ class server_database:
 		for i in self.chatrooms:
 			returnVal += " " + i.get_name()
 		return returnVal
-
-
+	
+	def chatroom_history(self, name):
+		for r in self.chatrooms:
+			if r.get_name() == name:
+				returnVal = ""
+				li = r.get_history()
+				for i in li:
+					returnVal += "\n" + i
+				print returnVal
+				return returnVal
+		return False
+	
 	#input: message as a string, room name as a string
 	#Returns a list of username/connection tuples,
 	#or false if the chat room doesn't exist

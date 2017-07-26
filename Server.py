@@ -102,6 +102,7 @@ def process_message(c, username, msg):
 			c.send("The chat room does not exist")
 	elif cmd == "/joinchatroom":
 		database.link_user_chatroom(username, arg)
+		c.send(database.chatroom_history(arg))
 	elif cmd == "/leavechatroom":
 		database.unlink_user_chatroom(username, arg)
 	elif cmd == "/createchatroom":
