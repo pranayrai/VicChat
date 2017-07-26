@@ -16,7 +16,7 @@ class GUIWindow(QWidget):
     def new_room(self):
         text, ok = QInputDialog.getText(self, 'Create new room', 'Enter a room name:')
         if ok:
-            self.rooms.addItem(text)
+            #self.rooms.addItem(text)
             #self.rooms.setCurrentIndex(self.rooms.count()-1)
             self.client.create_room(text)
             #self.client.leave_room(self.currentRoom)
