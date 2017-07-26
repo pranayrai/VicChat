@@ -37,6 +37,7 @@ class server_database:
 			if r.get_name() == name:
 				returnVal = ""
 				li = r.get_history()
+				firstItem = True
 				for i in li:
 					returnVal += i + "\n"
 				print returnVal
