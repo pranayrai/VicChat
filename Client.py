@@ -20,7 +20,7 @@ class Client(QObject):
 		self.s = socket.socket()
 		host = socket.gethostname()
 		port = 9999
-		self.room = "General"
+		self.room = "general"
 		try:
 			self.s.connect((host, port))
 		except:
