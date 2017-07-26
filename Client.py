@@ -20,7 +20,7 @@ class Client(QObject):
 		self.s = socket.socket()
 		host = socket.gethostname()
 		port = 9999
-		self.room = "General"
+		self.room = "general"
 		try:
 			self.s.connect((host, port))
 		except:
@@ -36,7 +36,8 @@ class Client(QObject):
 			try:
 				received = self.s.recv(1024)
 
-
+				if received.split()[0] == '/chatlog':
+					
 
 				self.messageSignal.emit(received)
 			except (socket.timeout):

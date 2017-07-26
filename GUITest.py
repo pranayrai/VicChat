@@ -347,6 +347,7 @@ class GUI:
 if __name__ == "__main__":
     #gui = GUI()
 
+
     app = QApplication(sys.argv)
     app.setStyle(QStyleFactory.create("plastique"))
     test = GUIWindow()
