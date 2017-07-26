@@ -39,7 +39,9 @@ class Client(QObject):
 				received = self.s.recv(1024)
 				if received.split()[0] == "/roomlist":
 					x = received.split()
-					self.roomListSignal.emit(str(x[1:]))
+					x = x[1:]
+
+					self.roomListSignal.emit(" ".join(str(i) for i in x))
 				else:
 					self.messageSignal.emit(received)
 			except (socket.timeout):

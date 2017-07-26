@@ -156,8 +156,11 @@ class GUIWindow(QWidget):
         self.outputBox.appendPlainText("Could not connect to server.")
 
     @pyqtSlot(str)
-    def get_new_room(self,rooms):
-        for i in rooms.split():
+    def get_new_room(self,roomList):
+        print roomList
+        print type(roomList)
+        roomList = roomList.split(' ')
+        for i in roomList:
             self.rooms.addItem(i)
 
 
