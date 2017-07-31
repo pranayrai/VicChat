@@ -9,8 +9,9 @@ from Client_database import client_database
 
 class Client(QObject):
 	messageSignal = pyqtSignal(str)
-	errorSignal = pyqtSignal()
+	errorSignal = pyqtSignal(str)
 	roomListSignal = pyqtSignal(str)
+	greenSignal = pyqtSignal(str)
 	z = None
 	s = socket.socket()
 	currentRoom = None
@@ -27,7 +28,7 @@ class Client(QObject):
 		try:
 			self.s.connect((host, port))
 		except:
-			self.errorSignal.emit()
+			self.errorSignal.emit("Could not connect to server.")
 			return
 		print 'Connected to', host
 		self.z = None
@@ -44,7 +45,7 @@ class Client(QObject):
 						self.database.add_chatroom(z)
 					self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/history":
-					self.messageSignal.emit("You have joined {}.".format(self.currentRoom))
+					self.greenSignal.emit("You have joined {}.".format(self.currentRoom))
 					y = " ".join(str(i) for i in x[1:])
 					y = y.split('\n')
 					for z in y:
@@ -52,6 +53,8 @@ class Client(QObject):
 							self.database.add_message(z,self.currentRoom)
 							self.messageSignal.emit(z)
 					#self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
+				elif x[0] == "/error":
+					self.greenSignal.emit("You have joined {}.".format(self.currentRoom))
 				elif x[0] == self.currentRoom:
 					self.database.add_message(x[1:],x[0])
 					self.messageSignal.emit(" ".join(str(i) for i in x[1:]))

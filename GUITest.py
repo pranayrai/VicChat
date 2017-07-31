@@ -94,7 +94,7 @@ class GUIWindow(QWidget):
         self.inputBox.setPlaceholderText("enter message here")
 
         # Create a multi-line textbox to display history
-        self.outputBox = QPlainTextEdit(self)
+        self.outputBox = QTextEdit(self)
         self.outputBox.setReadOnly(True)
 
         # Add the room label
@@ -132,7 +132,8 @@ class GUIWindow(QWidget):
         self.thread = QThread(self)
         self.client.messageSignal.connect(self.receive_info)
         self.client.roomListSignal.connect(self.get_new_room)
-        self.client.errorSignal.connect(self.connection_error)
+        self.client.errorSignal.connect(self.error_output)
+        self.client.greenSignal.connect(self.green_output)
         self.client.moveToThread(self.thread)
         self.thread.started.connect(self.client.run)
 
@@ -148,12 +149,16 @@ class GUIWindow(QWidget):
     # Receive messages from the server and display them to chat.
     @pyqtSlot(str)
     def receive_info(self, msg):
-        self.outputBox.appendPlainText(msg)
+        self.outputBox.append(msg)
 
-    # Error when you cannot connect to chat.
-    @pyqtSlot()
-    def connection_error(self):
-        self.outputBox.appendPlainText("Could not connect to server.")
+    # Receive messages from the server and display them to chat.
+    @pyqtSlot(str)
+    def green_output(self, msg):
+        self.outputBox.append("<span style=\" color:#008000;\" >{}</span>".format(msg))
+
+    @pyqtSlot(str)
+    def error_output(self, msg):
+        self.outputBox.append("<span style=\" color:#ff0000;\" >{}</span>".format(msg))
 
     @pyqtSlot(str)
     def get_new_room(self,roomList):
