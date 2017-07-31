@@ -76,10 +76,9 @@ def update_clients(li, msg):
 		try:
 			item[0].send(msg)
 		except socket.error as e:
-			print "we got 'a socket error!"
-#			database.remove_user(item[0])
-#			clients.remove(item)
-#			print "User disconnected: " + u
+			database.remove_user(item[0])
+			clients.remove(item)
+			print "User disconnected: " + u
 
 
 def process_message(c, username, msg):
@@ -89,33 +88,40 @@ def process_message(c, username, msg):
 	- first string = word starting with / (command)
 	"""
 	y = msg.split()
-	if len(y) < 2:
+	if len(y) < 1:
 		c.send("/error Incorrect message format. Please update the client")
 		return
-	cmd = str(y[0])
-	arg = str(y[1])
-	text = ""
-	for i in range (2,len(y),1):
-		text += str(y[i]) + " "
-	print cmd, arg, text
-	if cmd is None:
-		c.send("/error Incorrect input format")
-		return
-	if cmd == "/addmessage":
-		messageText = username + ": " + text
-		li = database.add_message(messageText, arg)
-		if li:
-			update_clients(li, arg + " " + messageText)
-		else:
-			c.send("The chat room does not exist")
-	elif cmd == "/joinchatroom":
-		database.link_user_chatroom(username, arg)
-		c.send("/history " + database.chatroom_history(arg))
-	elif cmd == "/leavechatroom":
-		database.unlink_user_chatroom(username, arg)
-	elif cmd == "/createchatroom":
-		database.add_chatroom(arg)
-		database.link_user_chatroom(username, arg)
-		update_clients(clients, "/roomlist " + arg)
+	elif len(y) < 2:
+		cmd = str(y[0])
+		if cmd is None:
+			c.send("/error Incorrect input format")
+		elif cmd == "listallrooms":
+			c.send('/roomlist' + database.list_chatrooms())
 	else:
-		c.send("/error Invalid command")
+		cmd = str(y[0])
+		arg = str(y[1])
+		text = ""
+		for i in range (2,len(y),1):
+			text += str(y[i]) + " "
+		print cmd, arg, text
+		if cmd is None:
+			c.send("/error Incorrect input format")
+			return
+		if cmd == "/addmessage":
+			messageText = username + ": " + text
+			li = database.add_message(messageText, arg)
+			if li:
+				update_clients(li, arg + " " + messageText)
+			else:
+				c.send("The chat room does not exist")
+		elif cmd == "/joinchatroom":
+			database.link_user_chatroom(username, arg)
+			c.send("/history " + database.chatroom_history(arg))
+		elif cmd == "/leavechatroom":
+			database.unlink_user_chatroom(username, arg)
+		elif cmd == "/createchatroom":
+			database.add_chatroom(arg)
+			database.link_user_chatroom(username, arg)
+			update_clients(clients, "/roomlist " + arg)
+		else:
+			c.send("/error Invalid command")
