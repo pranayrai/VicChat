@@ -18,13 +18,20 @@ database.add_chatroom('general')
 def listen_input():
 	while True:
 		q = None
-		for c, u in clients:
+		for cli in clients:
 			try:
-				q = c.recv(1024)
-				process_message(c, u, q)
+				q = cli[0].recv(1024)
+				process_message(cli[0], cli[1], q)
 			except(socket.timeout):
 				#If the socket times out, there isn't any input from c1
 				pass
+			except socket.error:
+				#If the socket throws an error, one of the clients has left
+				#Remove that client from the list, so that we are no longer
+				#listening for it
+				database.remove_user(cli[1])
+				print "User disconnected: " + cli[1]
+				clients.remove(cli)
 
 
 def listen_connections():
@@ -59,7 +66,7 @@ def get_username(c):
 		time.sleep(0.1)
 		c.send('general Connected to "general." You can start chatting now!')
 		time.sleep(0.1)
-		c.send("/history " + database.chatroom_history(arg))
+		c.send("/history " + database.chatroom_history('general'))
 	except socket.error:
 		pass
 
@@ -69,11 +76,10 @@ def update_clients(li, msg):
 		try:
 			item[0].send(msg)
 		except socket.error as e:
-			database.remove_user(item[0])
-			for cli in clients:
-				if cli[0] == item[0]:
-					clients.remove(cli)
-					break
+			print "we got 'a socket error!"
+#			database.remove_user(item[0])
+#			clients.remove(item)
+#			print "User disconnected: " + u
 
 
 def process_message(c, username, msg):

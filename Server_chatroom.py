@@ -17,10 +17,13 @@ class server_chatroom(chatroom):
 	def get_user_list(self):
 		return self.userList[:]
 	
-	def remove_user(self, u):
+	def remove_user(self, userName):
 		try:
-			self.userList.remove(u)
-			return True
+			for u in self.userList:
+				if u.get_username() == userName:
+					self.userList.remove(u)
+					return True
+			return False
 		except (ValueError):
 			return False
 	
@@ -74,4 +77,5 @@ def main():
 	assert not (c.remove_user("Timothy"))
 	assert (len(c.get_user_list()) == 2)
 
-main()
+if __name__ == "__main__":
+	main()

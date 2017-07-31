@@ -40,7 +40,6 @@ class server_database:
 				firstItem = True
 				for i in li:
 					returnVal += i + "\n"
-				print returnVal
 				return returnVal
 		return False
 
@@ -85,8 +84,8 @@ class server_database:
 				#If user is guest user, remove them from all chat rooms
 				#and delete their user object
 				else:
-					for c in u.get_chat_rooms():
-						c.remove(userName)
+					for r in u.get_chat_rooms():
+						r.remove_user(userName)
 					self.users.remove(u)
 					return True
 		return False
