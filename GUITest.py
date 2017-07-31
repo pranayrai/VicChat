@@ -7,8 +7,11 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 from time import sleep
 from Client import Client
+from functools import partial
 
-
+class RoomListWindow(QDialog):
+    def __init__(self, parent=None):
+        QDialog.__init__(self, parent)
 
 class GUIWindow(QWidget):
     # This is called when the new room button is pressed
@@ -28,9 +31,19 @@ class GUIWindow(QWidget):
     @pyqtSlot()
     def change_room(self):
         #self.client.leave_room(self.currentRoom)
-        self.client.join_room(self.rooms.currentText())
         self.outputBox.clear()
-        self.currentRoom = self.rooms.currentText()
+        hist = self.client.change_room(self.rooms.currentText())
+        if self.rooms.count() < 1:
+            self.outputBox.append("<span style=\" color:#ff0000;\" >You are not in any rooms!</span>")
+            return
+        self.outputBox.append("<span style=\" color:#008000;\" >Now chatting in {}.</span>".format(self.rooms.currentText()))
+        if hist is not False:
+            for i in hist:
+                self.outputBox.append(i)
+
+        '''self.client.join_room(self.rooms.currentText())
+        self.outputBox.clear()
+        self.currentRoom = self.rooms.currentText()'''
 
     # Sends the message to the server, then clears the inputBox.
     @pyqtSlot()
@@ -103,18 +116,23 @@ class GUIWindow(QWidget):
 
         # Create combobox for room list
         self.rooms = QComboBox(self)
-        self.rooms.addItem("general")
+        #self.rooms.addItem("general")
         #self.rooms.addItem("Random")
 
         # Button to add a new room
         self.addRoomBtn = QPushButton('New Room', self)
         self.addRoomBtn.setToolTip('Click to create a new room')
 
+        self.roomListBtn = QPushButton('Room List', self)
+        self.roomListBtn.setToolTip('Click to show list of rooms')
+
         #Place everything on the screen using a layout
         self.layout = QVBoxLayout()
         self.topL = QHBoxLayout()
         self.topL.addWidget(self.roomLabel)
         self.topL.addWidget(self.rooms)
+
+        self.topL.addWidget(self.roomListBtn)
         self.topL.addStretch()
         self.topL.addWidget(self.addRoomBtn)
 
@@ -125,15 +143,20 @@ class GUIWindow(QWidget):
 
         self.setLayout(self.layout)
 
-        self.currentRoom = self.rooms.currentText()
+        #self.currentRoom = self.rooms.currentText()
 
         # SET UP THE CLIENT IN A NEW THREAD:
         self.client = Client()
         self.thread = QThread(self)
         self.client.messageSignal.connect(self.receive_info)
-        self.client.roomListSignal.connect(self.get_new_room)
+
+        self.client.roomListSignal.connect(self.room_list)
+
         self.client.errorSignal.connect(self.error_output)
         self.client.greenSignal.connect(self.green_output)
+        self.client.joinRoomSignal.connect(self.join_room)
+        self.client.delRoomSignal.connect(self.delete_room)
+
         self.client.moveToThread(self.thread)
         self.thread.started.connect(self.client.run)
 
@@ -142,6 +165,8 @@ class GUIWindow(QWidget):
         self.btn.pressed.connect(self.on_press_print)
         self.rooms.currentIndexChanged.connect(self.change_room)
         self.addRoomBtn.clicked.connect(self.new_room)
+
+        self.roomListBtn.clicked.connect(lambda: self.client.get_room_list())
 
         # Start the thread!
         self.thread.start()
@@ -164,27 +189,65 @@ class GUIWindow(QWidget):
     def get_new_room(self,roomList):
         roomList = roomList.split(' ')
         for i in roomList:
-            if i != "general":
-                self.rooms.addItem(i)
+            #if i != "general":
+            self.rooms.addItem(i)
+
+    @pyqtSlot(str)
+    def join_room(self,room):
+        joinedRooms = [self.rooms.itemText(i) for i in range(self.rooms.count())]
+        if room not in joinedRooms:
+            self.rooms.addItem(room)
+        try:
+            self.nd.hide()
+        except:
+            return
+
+    @pyqtSlot(str)
+    def delete_room(self,room):
+        self.rooms.removeItem(self.rooms.findText(room))
+        self.nd.hide()
 
 
-    @pyqtSlot()
+    @pyqtSlot(str)
     def room_list(self,roomList):
 
-        self.roomlistwindow = QWidget()
-        rlayout = QVBoxLayout()
+        self.nd = RoomListWindow()
+        self.rlayout = QVBoxLayout()
+        roomList = roomList.split("\n")[1:]
+        #roomList = roomList[1:]
+        joinedRooms = [self.rooms.itemText(i) for i in range(self.rooms.count())]
 
         buttons = []
-        for i in roomList.items():
-            buttons.append(QPushButton(i, self.roomlistwindow))
-            buttons[-1].clicked.connect(partial(self.select_room, data=i))
-            rlayout.addWidget(buttons[-1])
-        self.roomlistwindow.setLayout(self.layout)
+        for i in roomList:
+            tempLayout = QHBoxLayout()
+            name = QLabel(self)
+            name.setText(i)
+            if i in joinedRooms:
+                buttons.append(QPushButton("Leave", self.nd))
+                buttons[-1].clicked.connect(partial(self.leave_room, data=i))
+            else:
+                buttons.append(QPushButton("Join", self.nd))
+                buttons[-1].clicked.connect(partial(self.select_room, data=i))
+            tempLayout.addWidget(name)
+            tempLayout.addWidget(buttons[-1])
+            self.rlayout.addLayout(tempLayout)
+        '''for i in roomList:
+            button = QPushButton(i,self.nd)
+            button.clicked.connect(lambda: self.select_room(i))
+            self.rlayout.addWidget(button)'''
+        self.nd.setLayout(self.rlayout)
+        self.nd.show()
 
 
     def select_room(self, data="\n"):
+        self.client.join_room(data)
         print data
         print "i join this room!"
+        #self.roomlistwindow.hide()
+
+    def leave_room(self, data="\n"):
+        self.client.leave_room(data)
+        print "leaving room"
 
 
 

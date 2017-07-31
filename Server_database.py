@@ -27,9 +27,9 @@ class server_database:
 		return False
 
 	def list_chatrooms(self):
-		returnVal = ""
+		returnVal = " "
 		for i in self.chatrooms:
-			returnVal += " " + i.get_name()
+			returnVal += "\n" + i.get_name()
 		return returnVal
 
 	def chatroom_history(self, name):

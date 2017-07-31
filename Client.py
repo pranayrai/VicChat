@@ -12,11 +12,14 @@ class Client(QObject):
 	errorSignal = pyqtSignal(str)
 	roomListSignal = pyqtSignal(str)
 	greenSignal = pyqtSignal(str)
+	joinRoomSignal = pyqtSignal(str)
+	delRoomSignal = pyqtSignal(str)
+
 	z = None
 	s = socket.socket()
 	currentRoom = None
 	joinedRooms = []
-	roomList = []
+	#roomList = []
 	database = client_database()
 
 	@pyqtSlot()
@@ -41,20 +44,22 @@ class Client(QObject):
 				received = self.s.recv(1024)
 				x = received.split(" ")
 				if x[0] == "/roomlist":
-					for z in x[1:]:
-						self.database.add_chatroom(z)
+					'''for z in x[1:]:
+						self.roomList.append(z)
+						#self.database.add_chatroom(z)'''
 					self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/history":
 					self.greenSignal.emit("You have joined {}.".format(self.currentRoom))
+					self.joinRoomSignal.emit(self.currentRoom)
 					y = " ".join(str(i) for i in x[1:])
 					y = y.split('\n')
 					for z in y:
 						if z != '':
 							self.database.add_message(z,self.currentRoom)
-							self.messageSignal.emit(z)
+							#self.messageSignal.emit(z)
 					#self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/error":
-					self.greenSignal.emit("You have joined {}.".format(self.currentRoom))
+					self.errorSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == self.currentRoom:
 					self.database.add_message(x[1:],x[0])
 					self.messageSignal.emit(" ".join(str(i) for i in x[1:]))
@@ -76,14 +81,27 @@ class Client(QObject):
 
 	def create_room(self,msg):
 		self.z = "/createchatroom {}".format(msg)
+		#self.currentRoom = msg
+		#self.database.add_chatroom(msg)
 
 	def leave_room(self,msg):
 		self.z = "/leavechatroom {}".format(msg)
 		self.currentRoom = None
+		self.database.remove_chatroom(msg)
+		self.delRoomSignal.emit(msg)
 
 	def join_room(self,msg):
 		self.z = "/joinchatroom {}".format(msg)
 		self.currentRoom = msg
+		self.database.add_chatroom(msg)
+
+	def get_room_list(self):
+		self.z = "/listallrooms"
+		print "changed"
+		#return self.database.list_chatrooms()
+
+	def change_room(self,msg):
+		return self.database.load_from_chatroom(msg)
 
 
 

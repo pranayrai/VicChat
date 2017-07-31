@@ -62,7 +62,7 @@ def get_username(c):
 				database.link_user_chatroom(name, 'general')
 				break
 			c.send("/error Username already exists. Try a different username")
-		c.send('/roomlist' + database.list_chatrooms())
+		#c.send('/roomlist' + database.list_chatrooms())
 		time.sleep(0.1)
 		c.send('general Connected to "general." You can start chatting now!')
 		time.sleep(0.1)
@@ -95,7 +95,7 @@ def process_message(c, username, msg):
 		cmd = str(y[0])
 		if cmd is None:
 			c.send("/error Incorrect input format")
-		elif cmd == "listallrooms":
+		elif cmd == "/listallrooms":
 			c.send('/roomlist' + database.list_chatrooms())
 	else:
 		cmd = str(y[0])
@@ -113,7 +113,7 @@ def process_message(c, username, msg):
 			if li:
 				update_clients(li, arg + " " + messageText)
 			else:
-				c.send("The chat room does not exist")
+				c.send("/error The chat room does not exist")
 		elif cmd == "/joinchatroom":
 			database.link_user_chatroom(username, arg)
 			c.send("/history " + database.chatroom_history(arg))
@@ -122,6 +122,6 @@ def process_message(c, username, msg):
 		elif cmd == "/createchatroom":
 			database.add_chatroom(arg)
 			database.link_user_chatroom(username, arg)
-			update_clients(clients, "/roomlist " + arg)
+			#update_clients(clients, "/roomlist " + arg)
 		else:
 			c.send("/error Invalid command")
