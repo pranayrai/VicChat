@@ -116,8 +116,6 @@ class GUIWindow(QWidget):
 
         # Create combobox for room list
         self.rooms = QComboBox(self)
-        #self.rooms.addItem("general")
-        #self.rooms.addItem("Random")
 
         # Button to add a new room
         self.addRoomBtn = QPushButton('New Room', self)

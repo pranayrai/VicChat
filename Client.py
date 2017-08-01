@@ -4,7 +4,7 @@ import threading
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import time
-from Client_database import client_database
+from Client_data import client_data
 
 
 class Client(QObject):
@@ -20,7 +20,7 @@ class Client(QObject):
 	currentRoom = None
 	joinedRooms = []
 	#roomList = []
-	database = client_database()
+	data = client_data()
 
 	@pyqtSlot()
 	def run(self):
@@ -46,7 +46,7 @@ class Client(QObject):
 				if x[0] == "/roomlist":
 					'''for z in x[1:]:
 						self.roomList.append(z)
-						#self.database.add_chatroom(z)'''
+						#self.data.add_chatroom(z)'''
 					self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/history":
 					self.greenSignal.emit("You have joined {}.".format(self.currentRoom))
@@ -55,16 +55,16 @@ class Client(QObject):
 					y = y.split('\n')
 					for z in y:
 						if z != '':
-							self.database.add_message(z,self.currentRoom)
+							self.data.add_message(z,self.currentRoom)
 							#self.messageSignal.emit(z)
 					#self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/error":
 					self.errorSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == self.currentRoom:
-					self.database.add_message(x[1:],x[0])
+					self.data.add_message(x[1:],x[0])
 					self.messageSignal.emit(" ".join(str(i) for i in x[1:]))
 				else:
-					self.database.add_message(x[1:],x[0])
+					self.data.add_message(x[1:],x[0])
 					print "A message has been sent to another room:"
 					print received
 
@@ -82,26 +82,25 @@ class Client(QObject):
 	def create_room(self,msg):
 		self.z = "/createchatroom {}".format(msg)
 		#self.currentRoom = msg
-		#self.database.add_chatroom(msg)
+		#self.data.add_chatroom(msg)
 
 	def leave_room(self,msg):
 		self.z = "/leavechatroom {}".format(msg)
 		self.currentRoom = None
-		self.database.remove_chatroom(msg)
+		self.data.remove_chatroom(msg)
 		self.delRoomSignal.emit(msg)
 
 	def join_room(self,msg):
 		self.z = "/joinchatroom {}".format(msg)
 		self.currentRoom = msg
-		self.database.add_chatroom(msg)
+		self.data.add_chatroom(msg)
 
 	def get_room_list(self):
 		self.z = "/listallrooms"
-		print "changed"
-		#return self.database.list_chatrooms()
+		#return self.data.list_chatrooms()
 
 	def change_room(self,msg):
-		return self.database.load_from_chatroom(msg)
+		return self.data.load_from_chatroom(msg)
 
 
 

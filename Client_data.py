@@ -1,9 +1,12 @@
 from Chatroom import chatroom
 
 
-class client_database:
+class client_data:
 
     chatrooms = []
+    
+    def __init__(self):
+        self.chatrooms = []
 
     def add_chatroom(self,*args):
 

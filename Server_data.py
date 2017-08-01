@@ -1,7 +1,7 @@
 from Server_chatroom import server_chatroom
 from User import user
 
-class server_database:
+class server_data:
 	chatrooms = None
 	users = None
 

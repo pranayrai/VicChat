@@ -3,7 +3,7 @@ import sys
 import threading
 import time
 import re
-from Server_database import server_database
+from Server_data import server_data
 
 s = socket.socket()
 host = socket.gethostname()
@@ -11,11 +11,11 @@ port = 9999
 s.bind((host, port))
 
 clients = []
-database = server_database()
-database.add_chatroom('general')
+data = server_data()
+data.add_chatroom('general')
 
 
-def listen_input():
+def receive():
 	while True:
 		q = None
 		for cli in clients:
@@ -29,7 +29,7 @@ def listen_input():
 				#If the socket throws an error, one of the clients has left
 				#Remove that client from the list, so that we are no longer
 				#listening for it
-				database.remove_user(cli[1])
+				data.remove_user(cli[1])
 				print "User disconnected: " + cli[1]
 				clients.remove(cli)
 
@@ -42,7 +42,7 @@ def listen_connections():
 		print 'Got connection from', addr
 		threading.Thread(target = get_username, args=(c,)).start()
 
-threading.Thread(target = listen_input).start()
+threading.Thread(target = receive).start()
 threading.Thread(target = listen_connections).start()
 
 
@@ -56,17 +56,13 @@ def get_username(c):
 				c.send("/error Incorrect message format. Please update the client")
 				continue
 			name = str(y[2])
-			if name and database.add_user(name, c):
+			if name and data.add_user(name, c):
 				c.settimeout(0.001)
 				clients.append((c, name))
-				database.link_user_chatroom(name, 'general')
+				data.link_user_chatroom(name, 'general')
 				break
 			c.send("/error Username already exists. Try a different username")
-		#c.send('/roomlist' + database.list_chatrooms())
-		time.sleep(0.1)
-		c.send('general Connected to "general." You can start chatting now!')
-		time.sleep(0.1)
-		c.send("/history " + database.chatroom_history('general'))
+		c.send("/history " + data.chatroom_history('general'))
 	except socket.error:
 		pass
 
@@ -76,7 +72,7 @@ def update_clients(li, msg):
 		try:
 			item[0].send(msg)
 		except socket.error as e:
-			database.remove_user(item[0])
+			data.remove_user(item[0])
 			clients.remove(item)
 			print "User disconnected: " + u
 
@@ -96,7 +92,7 @@ def process_message(c, username, msg):
 		if cmd is None:
 			c.send("/error Incorrect input format")
 		elif cmd == "/listallrooms":
-			c.send('/roomlist' + database.list_chatrooms())
+			c.send('/roomlist' + data.list_chatrooms())
 	else:
 		cmd = str(y[0])
 		arg = str(y[1])
@@ -109,19 +105,19 @@ def process_message(c, username, msg):
 			return
 		if cmd == "/addmessage":
 			messageText = username + ": " + text
-			li = database.add_message(messageText, arg)
+			li = data.add_message(messageText, arg)
 			if li:
 				update_clients(li, arg + " " + messageText)
 			else:
 				c.send("/error The chat room does not exist")
 		elif cmd == "/joinchatroom":
-			database.link_user_chatroom(username, arg)
-			c.send("/history " + database.chatroom_history(arg))
+			data.link_user_chatroom(username, arg)
+			c.send("/history " + data.chatroom_history(arg))
 		elif cmd == "/leavechatroom":
-			database.unlink_user_chatroom(username, arg)
+			data.unlink_user_chatroom(username, arg)
 		elif cmd == "/createchatroom":
-			database.add_chatroom(arg)
-			database.link_user_chatroom(username, arg)
+			data.add_chatroom(arg)
+			data.link_user_chatroom(username, arg)
 			#update_clients(clients, "/roomlist " + arg)
 		else:
 			c.send("/error Invalid command")
