@@ -2,7 +2,6 @@ import socket
 import sys
 import threading
 import time
-import re
 from Server_data import server_data
 
 s = socket.socket()
@@ -56,13 +55,18 @@ def get_username(c):
 				c.send("/error Incorrect message format. Please update the client")
 				continue
 			name = str(y[2])
-			if name and data.add_user(name, c):
+			rooms = data.add_user(name, c)
+			if name and rooms:
 				c.settimeout(0.001)
 				clients.append((c, name))
-				data.link_user_chatroom(name, 'general')
+				if type(rooms) is list:
+					for r in rooms:
+						c.send("/history " + r + " " + data.chatroom_history(r))
+				else:
+					data.link_user_chatroom(name, 'general')
+					c.send("/history " + data.chatroom_history('general'))
 				break
 			c.send("/error Username already exists. Try a different username")
-		c.send("/history " + data.chatroom_history('general'))
 	except socket.error:
 		pass
 
@@ -74,7 +78,7 @@ def update_clients(li, msg):
 		except socket.error as e:
 			data.remove_user(item[0])
 			clients.remove(item)
-			print "User disconnected: " + u
+			print "User disconnected: " + item[0]
 
 
 def process_message(c, username, msg):

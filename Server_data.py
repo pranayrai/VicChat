@@ -58,10 +58,17 @@ class server_data:
 
 	#Creates a new user object with the desired name, and returns true.
 	#Returns false if the username is already in use.
+	#If the user is a returning permanent user, return a list of chat rooms they are in
 	def add_user(self, userName, conn):
 		for u in self.users:
 			if u.get_username() == userName:
-				return False
+				if u.get_connection is not None:
+					return False
+				else:
+					retVal = []
+					for r in u.get_chat_rooms:
+						retVal.append(r.get_name)
+					return retVal
 		newUser = user(userName, conn)
 		self.users.append(newUser)
 		return True
