@@ -64,7 +64,7 @@ def get_username(c):
 						c.send("/history " + r + " " + data.chatroom_history(r))
 				else:
 					data.link_user_chatroom(name, 'general')
-					c.send("/history " + data.chatroom_history('general'))
+					c.send("/history general" + data.chatroom_history('general'))
 				break
 			c.send("/error Username already exists. Try a different username")
 	except socket.error:
@@ -124,4 +124,4 @@ def process_message(c, username, msg):
 			data.link_user_chatroom(username, arg)
 			#update_clients(clients, "/roomlist " + arg)
 		else:
-			c.send("/error Invalid command")
+			c.send("/error command not recognized")
