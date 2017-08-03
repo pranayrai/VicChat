@@ -60,6 +60,9 @@ class Client(QObject):
 					#self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/error":
 					self.errorSignal.emit(" ".join(str(i) for i in x[1:]))
+				elif x[0] == "/display":
+					self.greenSignal.emit(" ".join(str(i) for i in x[1:]))
+				
 				elif x[0] == self.currentRoom:
 					self.data.add_message(x[1:],x[0])
 					self.messageSignal.emit(" ".join(str(i) for i in x[1:]))
@@ -91,8 +94,11 @@ class Client(QObject):
 		self.delRoomSignal.emit(msg)
 
 	def join_room(self,msg):
-		self.z = "/joinchatroom {}".format(msg)
 		self.currentRoom = msg
+		hist = self.data.load_from_chatroom(msg)
+		if hist:
+			return hist
+		self.z = "/joinchatroom {}".format(msg)
 		self.data.add_chatroom(msg)
 
 	def get_room_list(self):
@@ -100,6 +106,7 @@ class Client(QObject):
 		#return self.data.list_chatrooms()
 
 	def change_room(self,msg):
+		self.currentRoom = msg
 		return self.data.load_from_chatroom(msg)
 
 

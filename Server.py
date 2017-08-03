@@ -46,7 +46,7 @@ threading.Thread(target = listen_connections).start()
 
 
 def get_username(c):
-	c.send("general Enter a username")
+	c.send("/sysmessage Enter a username")
 	try:
 		while True:
 			msg = c.recv(1024)
@@ -67,6 +67,7 @@ def get_username(c):
 					c.send("/history general" + data.chatroom_history('general'))
 				break
 			c.send("/error Username already exists. Try a different username")
+	#If the user doesn't complete the login process, don't add them to the list of users
 	except socket.error:
 		pass
 
@@ -77,7 +78,6 @@ def update_clients(li, msg):
 			item[0].send(msg)
 		except socket.error as e:
 			data.remove_user(item[0])
-			clients.remove(item)
 			print "User disconnected: " + item[0]
 
 
