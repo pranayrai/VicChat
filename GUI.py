@@ -112,7 +112,6 @@ class GUIWindow(QWidget):
 	# This is called when the room selection is changed
 	@pyqtSlot()
 	def change_room(self):
-		# self.client.leave_room(self.currentRoom)
 		self.outputBox.clear()
 		hist = self.client.change_room(self.rooms.currentText())
 		if self.rooms.count() < 1:
@@ -123,10 +122,6 @@ class GUIWindow(QWidget):
 		if hist is not False:
 			for i in hist:
 				self.outputBox.append(i)
-		
-		'''self.client.join_room(self.rooms.currentText())
-		self.outputBox.clear()
-		self.currentRoom = self.rooms.currentText()'''
 	
 	# Sends the message to the server, then clears the inputBox.
 	@pyqtSlot()

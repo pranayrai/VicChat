@@ -49,16 +49,14 @@ class client_networking(QObject):
 					self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/history":
 					room = x[1]
-					# Attempt to add the chat room. If the room exists already,
-					# this will return false and not change client_data
-					if self.data.add_chatroom(room):
-						self.join_room(room)
-						continue
-					y = " ".join(str(i) for i in x[2:])
-					y = y.split('\n')
-					for z in y:
-						if z != '':
-							self.data.add_message(z,room)
+					# History should only be loaded for a new chatroom or an empty (just created)
+					# room. Otherwise, discard the data
+					if self.data.add_chatroom(room) or self.data.load_from_chatroom(room) == []:
+						y = " ".join(str(i) for i in x[2:])
+						y = y.split('\n')
+						for z in y:
+							if z != '':
+								self.data.add_message(z,room)
 					#self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/error":
 					self.errorSignal.emit(" ".join(str(i) for i in x[1:]))

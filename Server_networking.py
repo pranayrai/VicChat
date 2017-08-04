@@ -30,7 +30,7 @@ def receive():
 				#listening for it
 				data.remove_user(cli[1])
 				print "User disconnected: " + cli[1]
-				clients.remove(cli)
+				clients.remove(cli[1])
 
 
 def listen_connections():
@@ -77,7 +77,7 @@ def update_clients(li, msg):
 		try:
 			item[0].send(msg)
 		except socket.error as e:
-			data.remove_user(item[0])
+			data.remove_user(item[1])
 			print "User disconnected: " + item[1]
 
 
