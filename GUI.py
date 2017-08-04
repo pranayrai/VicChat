@@ -105,7 +105,7 @@ class GUIWindow(QWidget):
 			self.rooms.addItem(text)
 			self.rooms.setCurrentIndex(self.rooms.count() - 1)
 			self.client.create_room(text)
-			self.client.join_room(self.rooms.currentText())
+			#self.client.join_room(self.rooms.currentText())
 			self.currentRoom = self.rooms.currentText()
 			# self.commands.append("New room: " + text)
 	
@@ -208,7 +208,7 @@ class GUIWindow(QWidget):
 		self.nd.show()
 	
 	def select_room(self, data="\n"):
-		self.client.join_room(data)
+		self.client.change_room(data)
 		print data
 		print "i join this room!"
 	

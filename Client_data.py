@@ -11,8 +11,9 @@ class client_data:
     def add_chatroom(self,*args):
 
         if len(args) == 1:
-            if args[0] in self.chatrooms:
-                return False
+            for r in self.chatrooms:
+                if args[0] == r.get_name():
+                    return False
             self.chatrooms.append(chatroom(args[0]))
             return True
         elif len(args) == 2:
