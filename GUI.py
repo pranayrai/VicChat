@@ -21,7 +21,7 @@ class GUIWindow(QWidget):
 		QWidget.__init__(self, parent)
 		
 		self.username = ''
-		self.currentRoom = ''
+		self.currentRoom = 'general'
 		
 		# Name and resize the main window
 		self.setWindowTitle('VicChat GUI prototype')

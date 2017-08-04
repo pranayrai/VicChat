@@ -52,11 +52,15 @@ class client_networking(QObject):
 					# History should only be loaded for a new chatroom or an empty (just created)
 					# room. Otherwise, discard the data
 					if self.data.add_chatroom(room) or self.data.load_from_chatroom(room) == []:
+						self.joinRoomSignal.emit(self.currentRoom)
 						y = " ".join(str(i) for i in x[2:])
 						y = y.split('\n')
 						for z in y:
 							if z != '':
 								self.data.add_message(z,room)
+								if room == self.currentRoom:
+									#self.messageSignal.emit(z)
+									pass
 					#self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/error":
 					self.errorSignal.emit(" ".join(str(i) for i in x[1:]))
@@ -105,5 +109,4 @@ class client_networking(QObject):
 	def change_room(self,msg):
 		self.currentRoom = msg
 		hist = self.data.load_from_chatroom(msg)
-		print hist
 		return hist
