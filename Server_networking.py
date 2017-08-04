@@ -30,7 +30,7 @@ def receive():
 				#listening for it
 				data.remove_user(cli[1])
 				print "User disconnected: " + cli[1]
-				clients.remove(cli[1])
+				clients.remove(cli)
 
 
 def listen_connections():
