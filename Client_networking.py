@@ -64,10 +64,12 @@ class client_networking(QObject):
 				elif x[0] == "/sysmessage":
 					self.greenSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == self.currentRoom:
-					self.data.add_message(x[1:],x[0])
-					self.messageSignal.emit(" ".join(str(i) for i in x[1:]))
+					msg = " ".join(str(i) for i in x[1:])
+					self.data.add_message(msg,x[0])
+					self.messageSignal.emit(msg)
 				else:
-					self.data.add_message(x[1:],x[0])
+					" ".join(str(i) for i in x[1:])
+					self.data.add_message(msg,x[0])
 					print "A message has been sent to another room:"
 					print received
 
@@ -84,7 +86,7 @@ class client_networking(QObject):
 
 	def create_room(self,msg):
 		self.s.send("/createchatroom {}".format(msg))
-		join_room(msg)
+		self.join_room(msg)
 
 	def leave_room(self,msg):
 		self.z = "/leavechatroom {}".format(msg)

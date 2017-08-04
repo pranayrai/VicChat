@@ -64,7 +64,7 @@ def get_username(c):
 						c.send("/history " + r + " " + data.chatroom_history(r))
 				else:
 					data.link_user_chatroom(name, 'general')
-					c.send("/history general" + data.chatroom_history('general'))
+					c.send("/history general " + data.chatroom_history('general'))
 				break
 			c.send("/error Username already exists. Try a different username")
 	#If the user doesn't complete the login process, don't add them to the list of users
@@ -78,7 +78,7 @@ def update_clients(li, msg):
 			item[0].send(msg)
 		except socket.error as e:
 			data.remove_user(item[0])
-			print "User disconnected: " + item[0]
+			print "User disconnected: " + item[1]
 
 
 def process_message(c, username, msg):
@@ -116,7 +116,9 @@ def process_message(c, username, msg):
 				c.send("/error The chat room does not exist")
 		elif cmd == "/joinchatroom":
 			data.link_user_chatroom(username, arg)
-			c.send("/history " + data.chatroom_history(arg))
+			hist = data.chatroom_history(arg)
+			if hist:
+				c.send("/history " + arg + " " + hist)
 		elif cmd == "/leavechatroom":
 			data.unlink_user_chatroom(username, arg)
 		elif cmd == "/createchatroom":

@@ -196,7 +196,7 @@ class GUIWindow(QWidget):
 				buttons[-1].clicked.connect(partial(self.leave_room, data=i))
 			else:
 				buttons.append(QPushButton("Join", self.nd))
-				buttons[-1].clicked.connect(partial(self.select_room, data=i))
+				buttons[-1].clicked.connect(partial(self.join_room, room=i))
 			tempLayout.addWidget(name)
 			tempLayout.addWidget(buttons[-1])
 			self.rlayout.addLayout(tempLayout)
