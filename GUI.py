@@ -73,22 +73,22 @@ class GUIWindow(QWidget):
 		self.client = client_networking()
 		self.thread = QThread(self)
 
-		# Signal for the client to send a standard message
+		# Signal for GUI to display a standard message
 		self.client.messageSignal.connect(self.receive_info)
 
-		# Signal for the client to send a list of rooms
+		# Signal for the GUI to open the list of rooms
 		self.client.roomListSignal.connect(self.room_list)
 
-		# Error signal from the client
+		# Error signal from the client (red text)
 		self.client.errorSignal.connect(self.error_output)
 
-		# Signal for green text
+		# Signal to display green text
 		self.client.greenSignal.connect(self.green_output)
 
-		# Signal to add a new room
+		# Signal to add a new room to the GUI's QComboBox
 		self.client.joinRoomSignal.connect(self.join_room)
 
-		# Signal to remove a room from the list
+		# Signal to remove a room from the GUI's QCombobox
 		self.client.delRoomSignal.connect(self.delete_room)
 
 		# Move the new client instance onto the QThread
@@ -101,6 +101,10 @@ class GUIWindow(QWidget):
 		self.rooms.currentIndexChanged.connect(self.change_room)
 		self.addRoomBtn.clicked.connect(self.new_room)
 
+		# When the Room List button is pressed, instead of immediately opening
+		# the new window, it instead sends a signal to the client to request
+		# a list of rooms from the server. Once that list returns, it then
+		# opens the Room List window using the list of rooms recieved.
 		self.roomListBtn.clicked.connect(lambda: self.client.get_room_list())
 
 		# Start the thread!
