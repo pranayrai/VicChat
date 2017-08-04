@@ -116,9 +116,13 @@ class GUIWindow(QWidget):
 		# Creates a pop-up window with a textbox
 		text, ok = QInputDialog.getText(self, 'Create new room', 'Enter a room name:')
 		if ok:
+			joinedRooms = [self.rooms.itemText(i) for i in range(self.rooms.count())]
 			# Checks for spaces which can mess up the list of rooms.
 			if ' ' in text:
 				self.error_output("Chatroom names cannot contain spaces.")
+				return
+			elif text in joinedRooms:
+				self.error_output("This room already exists.")
 				return
 			else:
 				# Adds the room the the combobox and sends the name to the client.
