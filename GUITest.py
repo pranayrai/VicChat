@@ -36,7 +36,7 @@ class GUIWindow(QWidget):
         if self.rooms.count() < 1:
             self.outputBox.append("<span style=\" color:#ff0000;\" >You are not in any rooms!</span>")
             return
-        self.outputBox.append("<span style=\" color:#008000;\" >Now chatting in {}.</span>".format(self.rooms.currentText()))
+        self.outputBox.append("<span style=\" color:#008000;\" >You have joined {}.</span>".format(self.rooms.currentText()))
         if hist is not False:
             for i in hist:
                 self.outputBox.append(i)
@@ -239,6 +239,7 @@ class GUIWindow(QWidget):
 
     def select_room(self, data="\n"):
         self.client.join_room(data)
+        self.join_room(data)
         print data
         print "i join this room!"
         #self.roomlistwindow.hide()

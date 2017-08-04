@@ -38,36 +38,32 @@ class Client(QObject):
 		#This causes all socket operations on s to timeout (Throw a socket.timemout exception)
 		#if more than the set time passes
 		self.s.settimeout(0.01)
+
 		#Continuously look for user and server messages
 		while True:
 			try:
 				received = self.s.recv(1024)
 				x = received.split(" ")
 				if x[0] == "/roomlist":
-					'''for z in x[1:]:
-						self.roomList.append(z)
-						#self.data.add_chatroom(z)'''
 					self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/history":
-					self.greenSignal.emit("You have joined {}.".format(self.currentRoom))
+					self.greenSignal.emit("{} has been added to your list of rooms.".format(self.currentRoom))
 					self.joinRoomSignal.emit(self.currentRoom)
 					y = " ".join(str(i) for i in x[1:])
 					y = y.split('\n')
 					for z in y:
 						if z != '':
 							self.data.add_message(z,self.currentRoom)
-							#self.messageSignal.emit(z)
-					#self.roomListSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/error":
 					self.errorSignal.emit(" ".join(str(i) for i in x[1:]))
 				elif x[0] == "/display":
 					self.greenSignal.emit(" ".join(str(i) for i in x[1:]))
 				
 				elif x[0] == self.currentRoom:
-					self.data.add_message(x[1:],x[0])
+					self.data.add_message(" ".join(str(i) for i in x[1:]),x[0])
 					self.messageSignal.emit(" ".join(str(i) for i in x[1:]))
 				else:
-					self.data.add_message(x[1:],x[0])
+					self.data.add_message(" ".join(str(i) for i in x[1:]),x[0])
 					print "A message has been sent to another room:"
 					print received
 
