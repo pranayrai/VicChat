@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # A set of simple tests, outputting the results from each.
 
     print ""
-    cd = client_database()
+    cd = client_data()
 
     print "Listing chatrooms:"
     print cd.list_chatrooms()
