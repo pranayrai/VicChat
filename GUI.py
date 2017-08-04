@@ -127,15 +127,18 @@ class GUIWindow(QWidget):
 				self.client.create_room(text)
 
 	# This is called when the room selection is changed
+	# This gets the history from the Client's database, and outputs it all in the textbox.
 	@pyqtSlot()
 	def change_room(self):
 		self.outputBox.clear()
 		hist = self.client.change_room(self.rooms.currentText())
+		# Checks to make sure you are actually in a room.
 		if self.rooms.count() < 1:
 			self.outputBox.append("<span style=\" color:#ff0000;\" >You are not in any rooms!</span>")
 			return
 		self.outputBox.append(
 			"<span style=\" color:#008000;\" >Now chatting in {}.</span>".format(self.rooms.currentText()))
+		# Checks if hist is not empty and then outputs each message.
 		if hist is not False:
 			for i in hist:
 				self.outputBox.append(i)
@@ -211,6 +214,9 @@ class GUIWindow(QWidget):
 				# Creates a button that calls leave_room(i)
 				buttons.append(QPushButton("Leave", self.nd))
 				buttons[-1].clicked.connect(partial(self.leave_room, data=i))
+				if i == "general":
+					buttons[-1].setEnabled(False)
+					buttons[-1].setDisabled(True)
 			else:
 				# Creates a button that calls join_room(i)
 				buttons.append(QPushButton("Join", self.nd))
