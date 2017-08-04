@@ -38,7 +38,7 @@ class client_networking(QObject):
 		#if more than the set time passes
 		self.s.settimeout(1)
 		self.receive()
-	
+
 	#Continuously look for user and server messages
 	def receive(self):
 		while True:
@@ -89,6 +89,7 @@ class client_networking(QObject):
 
 	def create_room(self,msg):
 		self.s.send("/createchatroom {}".format(msg))
+		time.sleep(0.01)
 		self.join_room(msg)
 
 	def leave_room(self,msg):
