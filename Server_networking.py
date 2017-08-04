@@ -137,10 +137,11 @@ def process_message(c, username, msg):
 			if hist:
 				c.send("/history " + arg + " " + hist)
 		elif cmd == "/leavechatroom":
+			#Remove a user from a chatroom
 			data.unlink_user_chatroom(username, arg)
 		elif cmd == "/createchatroom":
+			#Create a new chatroom, and add the user to it
 			data.add_chatroom(arg)
 			data.link_user_chatroom(username, arg)
-			#update_clients(clients, "/roomlist " + arg)
 		else:
 			c.send("/error command not recognized")
