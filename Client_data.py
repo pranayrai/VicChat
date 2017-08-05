@@ -1,13 +1,15 @@
 from Chatroom import chatroom
 
-
+# Called by client_networking, this class is a list of all joined chatrooms and
+# their message history.
 class client_data:
 
     chatrooms = []
-    
+
     def __init__(self):
         self.chatrooms = []
 
+    # Adds a new chatroom. Can have 1 or 2 parameters (not including self).
     def add_chatroom(self,*args):
 
         if len(args) == 1:
@@ -27,6 +29,7 @@ class client_data:
         else:
             raise TypeError
 
+    # Deletes a chatroom from the list, removing all history from that room.
     def remove_chatroom(self,room):
         for i in self.chatrooms:
             if i.get_name() == room:
@@ -34,12 +37,14 @@ class client_data:
                 return True
         return False
 
+    # Returns a list of all chatrooms currently stored.
     def list_chatrooms(self):
         temp = []
         for i in self.chatrooms:
             temp.append(i.get_name())
         return temp
 
+    # Adds a new message to a chatroom.
     def add_message(self,message,room):
         for i in self.chatrooms:
             if i.get_name() == room:
@@ -47,6 +52,8 @@ class client_data:
                 return True
         return False
 
+    # Tries to load the message history of a chatroom.
+    # Returns False if the chatroom could not be found.
     def load_from_chatroom(self,room):
         for i in self.chatrooms:
             if i.get_name() == room:
@@ -54,61 +61,11 @@ class client_data:
         return False
 
 
-
-
-
-
-    '''def add_chatroom(*args):
-        if len(args) == 1:
-            if room in self.chatrooms:
-                return False
-            self.chatrooms[room] = chatroom()
-        elif len(args) == 2:
-            if room in self.chatrooms:
-                return False
-            self.chatrooms[room] = chatroom()
-            for i in history:
-                chatrooms[room].add_message(i)
-
-
-
-
-    def remove_chatroom(self,room):
-        if room not in self.chatrooms:
-            return False
-        del self.chatrooms[room]
-        return True
-
-    def list_chatrooms(self):
-        return list(self.chatrooms.keys())
-
-    def add_message(self,message,room):
-        if room not in self.chatrooms:
-            return False
-        #i = self.chatrooms.index(room)
-        self.chatrooms[name].add_message(message)
-        return True
-
-    def load_from_chatroom(self,room):
-        if room not in self.chatrooms:
-            return False
-        #i = self.chatrooms.index(room)
-        return self.chatrooms[room].get_history()'''
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
+    # A set of simple tests, outputting the results from each.
+
     print ""
-    cd = client_database()
+    cd = client_data()
 
     print "Listing chatrooms:"
     print cd.list_chatrooms()
