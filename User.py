@@ -44,7 +44,7 @@ class user():
 		return True
 	
 	# Removes the chatroom from this user's list of chatrooms
-def leave_chatroom(self,room):
+	def leave_chatroom(self,room):
 		if room not in self.chatrooms:
 			return False
 		self.chatrooms.remove(room)
