@@ -45,6 +45,7 @@ def listen_connections():
 		print 'Got connection from', addr
 		threading.Thread(target = get_username, args=(c,)).start()
 
+#Run these two threads in parallel
 threading.Thread(target = receive).start()
 threading.Thread(target = listen_connections).start()
 

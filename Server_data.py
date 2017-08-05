@@ -9,6 +9,7 @@ class server_data:
 		self.chatrooms = []
 		self.users = []
 
+	# Create a new chatroom. Return false if the chatroom cannot be found
 	def add_chatroom(self, name):
 		for r in self.chatrooms:
 			if r.get_name() == name:
@@ -16,8 +17,10 @@ class server_data:
 		room = server_chatroom(name)
 		self.chatrooms.append(room)
 		return True
-
-	def remove_chat_room(self, name):
+	
+	# Delete a chatroom. Return false if the chatroom cannot be found
+	# Also remove any users currently in the chatroom
+	def remove_chatroom(self, name):
 		for r in self.chatrooms:
 			if r.get_name() == name:
 				for u in r.get_user_list():
@@ -26,18 +29,19 @@ class server_data:
 				return True
 		return False
 
+	# Returns a list of the names (string list) of all chatrooms
 	def list_chatrooms(self):
 		returnVal = " "
 		for i in self.chatrooms:
 			returnVal += "\n" + i.get_name()
 		return returnVal
-
+	
+	# Returns all messages in a chatroom, formatted as a string
 	def chatroom_history(self, name):
 		for r in self.chatrooms:
 			if r.get_name() == name:
 				returnVal = ""
 				li = r.get_history()
-				firstItem = True
 				for i in li:
 					returnVal += i + "\n"
 				return returnVal
@@ -66,7 +70,7 @@ class server_data:
 					return False
 				else:
 					retVal = []
-					for r in u.get_chat_rooms:
+					for r in u.get_chatrooms:
 						retVal.append(r.get_name)
 					return retVal
 		newUser = user(userName, conn)
@@ -91,7 +95,7 @@ class server_data:
 				#If user is guest user, remove them from all chat rooms
 				#and delete their user object
 				else:
-					for r in u.get_chat_rooms():
+					for r in u.get_chatrooms():
 						r.remove_user(userName)
 					self.users.remove(u)
 					return True
@@ -159,8 +163,8 @@ def main():
 	assert temp[2].get_name() == "room3"
 
 	#Remove an empty chatroom
-	data.remove_chat_room("room3")
-	assert len(data.list_chat_rooms()) == 2
+	data.remove_chatroom("room3")
+	assert len(data.list_chatrooms()) == 2
 
 	#Add several users, and tests the list_users functionality
 	assert data.add_user("Bob", "blankConn")

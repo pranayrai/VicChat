@@ -10,13 +10,17 @@ class server_chatroom(chatroom):
 		self.name = n
 		self.maxLen = 100
 	
+	# Add a new user object to the list
+	# This will allow them to be updated when a message is added to this chatroom
 	def add_user(self, u):
 		self.userList.append(u)
 		return True
-		
+	
+	# Return all users that are connected to this chatroom
 	def get_user_list(self):
 		return self.userList[:]
 	
+	# Remove a user from this room's list
 	def remove_user(self, userName):
 		try:
 			for u in self.userList:
@@ -27,6 +31,8 @@ class server_chatroom(chatroom):
 		except (ValueError):
 			return False
 	
+	# Add a new message to this chatroom. Returns a list of all users connected
+	# so that they can be updated with the new message
 	def add_message(self, m):
 		# Remove the oldest message if the maximum length is reached
 		if self.length >= self.maxLen:
@@ -34,7 +40,7 @@ class server_chatroom(chatroom):
 			self.messageHistory.pop(0)
 		self.messageHistory.append(m)
 		self.length += 1
-		return self.userList
+		return self.userList[:]
 
 # Basic test suite for chatroom
 # Tests on the base chatroom are repeated here
